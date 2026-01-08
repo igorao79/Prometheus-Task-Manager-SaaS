@@ -8,12 +8,9 @@ export async function PUT(
   { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
-    console.log("=== STATUS UPDATE API CALLED ===")
     const session = await getServerSession(authOptions)
-    console.log("Session:", session ? "exists" : "null")
 
     if (!session?.user?.id) {
-      console.log("No user ID in session")
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -21,11 +18,8 @@ export async function PUT(
     }
 
     const { projectId } = await params
-    console.log("Project ID:", projectId)
     const body = await request.json()
-    console.log("Request body:", body)
     const { status } = body
-    console.log("Requested status:", status, "Type:", typeof status)
 
     const validStatuses = ["ACTIVE", "COMPLETED", "ARCHIVED"]
     if (!status || !validStatuses.includes(status)) {
@@ -51,7 +45,6 @@ export async function PUT(
     }
 
     // Обновляем статус проекта
-    console.log("Updating project with data:", { status })
     try {
       const updatedProject = await prisma.project.update({
         where: { id: projectId },
@@ -71,18 +64,15 @@ export async function PUT(
         },
       },
       })
-      console.log("Project updated successfully:", updatedProject.id, updatedProject.status)
 
       return NextResponse.json(updatedProject)
     } catch (dbError) {
-      console.error("Database error:", dbError)
       return NextResponse.json(
         { error: "Ошибка базы данных" },
         { status: 500 }
       )
     }
   } catch (error) {
-    console.error("Error updating project status:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

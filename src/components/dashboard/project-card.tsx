@@ -80,7 +80,6 @@ export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
         onUpdate() // Refresh the projects list
       } else {
         const error = await response.json()
-        console.error("Failed to delete project:", error.error)
         setNotification({
           isOpen: true,
           type: "error",
@@ -89,7 +88,6 @@ export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
         })
       }
     } catch (error) {
-      console.error("Error deleting project:", error)
       setNotification({
         isOpen: true,
         type: "error",

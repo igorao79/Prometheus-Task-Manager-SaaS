@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 
 export function AnimatedBackground() {
-  console.log("AnimatedBackground rendered")
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <svg

@@ -90,7 +90,6 @@ export async function POST(
 
     return NextResponse.json(newMember, { status: 201 })
   } catch (error) {
-    console.error("Error inviting member:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }
@@ -99,7 +98,7 @@ export async function POST(
 }
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
@@ -147,12 +146,8 @@ export async function GET(
       },
     })
 
-    console.log("Found members for project", projectId, ":", members.length, "members")
-    members.forEach(member => console.log("Member:", member.user.email, member.role))
-
     return NextResponse.json(members)
   } catch (error) {
-    console.error("Error fetching members:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

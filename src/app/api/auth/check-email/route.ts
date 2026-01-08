@@ -22,8 +22,7 @@ export async function POST(request: NextRequest) {
       exists: !!existingUser,
       message: existingUser ? "Email уже зарегистрирован" : "Email доступен"
     })
-  } catch (error) {
-    console.error("Error checking email:", error)
+  } catch (_error) {
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

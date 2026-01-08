@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
@@ -51,7 +51,6 @@ export async function DELETE(
       message: `Проект "${project.name}" успешно удален`
     })
   } catch (error) {
-    console.error("Error deleting project:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

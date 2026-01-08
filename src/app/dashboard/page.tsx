@@ -21,7 +21,6 @@ export default function Dashboard() {
         setProjectsWithTasks(projects)
       }
     } catch (error) {
-      console.error("Error fetching projects:", error)
     }
   }, [session?.user?.id])
 
@@ -34,7 +33,7 @@ export default function Dashboard() {
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProjects()
-  }, [session, status]) // fetchProjects is memoized and depends on session
+  }, [session, status, fetchProjects])
 
   if (status === "loading") {
     return (

@@ -26,11 +26,9 @@ export function PricingSection() {
         // User not authorized, don't show current plan
         setUserTarif(null)
       } else {
-        console.error('Failed to fetch user tarif:', response.statusText)
         setUserTarif(null)
       }
     } catch (error) {
-      console.error('Error fetching user tarif:', error)
       setUserTarif(null)
     }
   }, [])
@@ -51,10 +49,8 @@ export function PricingSection() {
         // Перезагружаем страницу для гарантированного обновления сессии с новым тарифом
         window.location.reload()
       } else {
-        console.error('Failed to update user tarif:', response.statusText)
       }
     } catch (error) {
-      console.error('Error updating user tarif:', error)
     }
   }, [])
 

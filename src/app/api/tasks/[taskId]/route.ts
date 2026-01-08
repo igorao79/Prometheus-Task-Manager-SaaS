@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function PUT(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
@@ -18,7 +18,7 @@ export async function PUT(
     }
 
     const { taskId } = await params
-    const { title, description, status, priority, assigneeId, deadline } = await request.json()
+    const { title, description, status, priority, assigneeId, deadline } = await _request.json()
 
     // Находим задачу и проверяем доступ
     const task = await prisma.task.findUnique({
@@ -116,7 +116,6 @@ export async function PUT(
 
     return NextResponse.json(updatedTask)
   } catch (error) {
-    console.error("Error updating task:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }
@@ -125,7 +124,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
@@ -177,7 +176,6 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Задача удалена" })
   } catch (error) {
-    console.error("Error deleting task:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

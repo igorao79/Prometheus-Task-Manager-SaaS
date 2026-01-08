@@ -70,7 +70,6 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
         setError(data.error || "Ошибка проверки email")
       }
     } catch (error) {
-      console.error("Error checking email:", error)
       setError("Ошибка проверки email")
     } finally {
       setCheckingEmail(false)

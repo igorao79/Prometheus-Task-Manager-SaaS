@@ -108,10 +108,8 @@ export function CreateTaskModal({
         setAssigneeId("")
         setDeadline(undefined)
       } else {
-        console.error("Failed to create task")
       }
     } catch (error) {
-      console.error("Error creating task:", error)
     } finally {
       setIsSubmitting(false)
     }

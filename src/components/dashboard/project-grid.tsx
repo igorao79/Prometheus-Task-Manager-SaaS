@@ -52,10 +52,8 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
         const projectsData = await response.json()
         setProjects(projectsData)
       } else {
-        console.error("Failed to fetch projects")
       }
     } catch (error) {
-      console.error("Error fetching projects:", error)
     } finally {
       setIsLoading(false)
     }

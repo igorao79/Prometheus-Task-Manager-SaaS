@@ -68,7 +68,6 @@ export function ProjectDetailsModal({
         setMembers(membersData)
       }
     } catch (error) {
-      console.error("Error fetching members:", error)
     } finally {
       setIsLoadingMembers(false)
     }
@@ -109,7 +108,6 @@ export function ProjectDetailsModal({
         setInviteError(error.error || "Ошибка при приглашении")
       }
     } catch (error) {
-      console.error("Error inviting member:", error)
       setInviteError("Произошла ошибка при приглашении")
     } finally {
       setIsInviting(false)
@@ -130,10 +128,8 @@ export function ProjectDetailsModal({
         setProjectStatus(newStatus)
         onUpdate() // Refresh projects list
       } else {
-        console.error("Failed to update project status")
       }
     } catch (error) {
-      console.error("Error updating project status:", error)
     }
   }
 

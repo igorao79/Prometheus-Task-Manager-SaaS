@@ -74,7 +74,6 @@ export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: Create
       setName("")
       setDescription("")
     } catch (error) {
-      console.error("Error creating project:", error)
       setError("Произошла ошибка при создании проекта")
     } finally {
       setIsLoading(false)

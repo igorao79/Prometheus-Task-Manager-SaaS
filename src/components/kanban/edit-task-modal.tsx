@@ -129,10 +129,8 @@ export function EditTaskModal({
         onTaskUpdated()
         onClose()
       } else {
-        console.error("Failed to update task")
       }
     } catch (error) {
-      console.error("Error updating task:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -151,10 +149,8 @@ export function EditTaskModal({
         onTaskDeleted(task.id)
         onClose()
       } else {
-        console.error("Failed to delete task")
       }
     } catch (error) {
-      console.error("Error deleting task:", error)
     } finally {
       setIsDeleting(false)
       setShowDeleteDialog(false)

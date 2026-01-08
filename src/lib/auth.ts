@@ -29,25 +29,18 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log("Authorize called with:", credentials?.email)
-
         if (!credentials?.email || !credentials?.password) {
-          console.log("Missing credentials")
           return null
         }
 
         try {
-          console.log("Attempting to connect to database...")
           const user = await prisma.user.findUnique({
             where: {
               email: credentials.email
             }
           })
 
-          console.log("User found:", user ? "yes" : "no")
-
           if (!user?.password) {
-            console.log("User has no password")
             return null
           }
 
@@ -56,14 +49,10 @@ export const authOptions: NextAuthOptions = {
             user.password
           )
 
-          console.log("Password valid:", isPasswordValid)
-
           if (!isPasswordValid) {
-            console.log("Invalid password")
             return null
           }
 
-              console.log("Auth successful for user:", user.email)
               return {
                 id: user.id,
                 email: user.email,
@@ -72,8 +61,6 @@ export const authOptions: NextAuthOptions = {
                 tarif: user.tarif,
               }
         } catch (error) {
-          console.error("Auth error:", error)
-          console.error("Error details:", error instanceof Error ? error.message : "Unknown error")
           return null
         }
       }
@@ -88,8 +75,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, trigger, session }) => {
-      console.log("JWT callback:", { token, user, trigger })
-
       if (user) {
         // При логине - устанавливаем данные из user
         token.id = user.id
@@ -100,7 +85,6 @@ export const authOptions: NextAuthOptions = {
 
       // При update() - обновляем токен новыми данными
       if (trigger === "update" && session?.user) {
-        console.log("JWT update triggered with:", session.user)
         token.name = session.user.name
         token.email = session.user.email
         // Обновляем тариф из БД при update
@@ -116,14 +100,12 @@ export const authOptions: NextAuthOptions = {
             token.picture = freshUser.image
           }
         } catch (error) {
-          console.error("Error updating JWT token:", error)
         }
       }
 
       return token
     },
     session: async ({ session, token }) => {
-      console.log("Session callback:", { session, token })
       if (token && session.user) {
         session.user.id = token.id as string
         session.user.name = token.name as string
@@ -143,7 +125,6 @@ export const authOptions: NextAuthOptions = {
             session.user.image = user.image
           }
         } catch (error) {
-          console.error("Error fetching fresh user data:", error)
           session.user.tarif = token.tarif as string || 'free'
         }
       }

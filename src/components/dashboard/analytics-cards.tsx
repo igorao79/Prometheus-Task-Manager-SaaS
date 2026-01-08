@@ -25,10 +25,6 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
 
   // Получаем задачи по статусу
   const getTasksByStatus = (status: string) => {
-    console.log("=== GET TASKS BY STATUS ===")
-    console.log("Requested status:", status)
-    console.log("Projects data:", projects)
-
     const allTasks: Array<{
       id: string
       title: string
@@ -38,15 +34,11 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
     }> = []
 
     projects.forEach(project => {
-      console.log(`Project ${project.name} has ${project.tasks.length} tasks`)
       project.tasks.forEach(task => {
-        console.log(`Task ${task.id} has status: "${task.status}" (type: ${typeof task.status})`)
         // Нормализуем статусы для сравнения
         const normalizedTaskStatus = task.status.replace('_', '_')
         const normalizedFilterStatus = status.replace('_', '_')
-        console.log(`Comparing "${normalizedTaskStatus}" === "${normalizedFilterStatus}"`)
         if (normalizedTaskStatus === normalizedFilterStatus) {
-          console.log(`Task ${task.id} matches status ${status}`)
           allTasks.push({
             id: task.id,
             title: `Задача ${task.id.slice(0, 8)}`,
@@ -58,17 +50,12 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
       })
     })
 
-    console.log(`Found ${allTasks.length} tasks for status ${status}`)
     return allTasks
   }
 
   const handleCardClick = (status: string) => {
-    console.log("=== HANDLE CARD CLICK ===")
-    console.log("Clicked card status:", status)
-
     setSelectedStatus(status)
     setShowTaskModal(true)
-    console.log("Opened modal for status:", status)
   }
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
@@ -85,7 +72,6 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
         onTasksUpdate?.() // Обновляем данные
       }
     } catch (error) {
-      console.error("Error updating task status:", error)
     }
   }
   // Подсчитываем статистику по всем проектам пользователя
@@ -163,17 +149,14 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-      {cards.map((card, index) => {
-        console.log(`Rendering card ${index}: "${card.title}" -> ${card.value} items`)
+      {cards.map((card) => {
         const IconComponent = card.icon
         return (
           <Card
             key={card.title}
             className={`${card.bgColor} border-0 ${card.title !== "Всего задач" ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
             onClick={() => {
-              console.log("Card clicked, title:", `"${card.title}"`, "length:", card.title.length)
               const trimmedTitle = card.title.trim()
-              console.log("Trimmed title:", `"${trimmedTitle}"`)
 
               if (trimmedTitle !== "Всего задач") {
                 let status = ""
@@ -182,17 +165,13 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
                 else if (trimmedTitle === "Проверка") status = "REVIEW"
                 else if (trimmedTitle === "Готово") status = "DONE"
                 else {
-                  console.log("Unknown title:", trimmedTitle)
                   return
                 }
 
-                console.log("Mapped status:", `"${status}"`)
                 if (status) {
-                  handleCardClick(status)
-                }
-              } else {
-                console.log("Ignoring 'Всего задач' card")
+                handleCardClick(status)
               }
+            }
             }}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -254,7 +233,6 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
           <div className="space-y-4 max-h-[400px] overflow-y-auto">
             {(() => {
               const tasks = selectedStatus ? getTasksByStatus(selectedStatus) : []
-              console.log("Rendering tasks for status", selectedStatus, ":", tasks)
               return tasks.map((task) => (
               <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div>

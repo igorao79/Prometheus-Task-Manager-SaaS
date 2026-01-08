@@ -8,7 +8,6 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma = globalForPrisma.prisma ?? (() => {
   // Always use adapter for PostgreSQL
-  console.log('DATABASE_URL:', process.env.DATABASE_URL)
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -24,7 +23,6 @@ export const prisma = globalForPrisma.prisma ?? (() => {
     adapter,
     log: ['query', 'error', 'warn']
   })
-  console.log('Prisma client created')
   return client
 })()
 
