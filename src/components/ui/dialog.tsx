@@ -13,9 +13,10 @@ function Dialog({
 }
 
 function DialogTrigger({
+  className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" className={cn("cursor-pointer", className)} {...props} />
 }
 
 function DialogPortal({

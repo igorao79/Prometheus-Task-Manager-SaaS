@@ -114,9 +114,6 @@ export function PricingSection() {
                   Поддержка через email
                 </li>
               </ul>
-              <Button className="w-full mt-6" variant="outline">
-                Выбрать бесплатный
-              </Button>
               {userTarif === 'free' && (
                 <p className="text-center text-blue-600 font-medium mt-2">
                   Ваш текущий план

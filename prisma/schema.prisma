@@ -72,6 +72,7 @@ model Project {
   id          String   @id @default(cuid())
   name        String
   description String?
+  status      ProjectStatus @default(ACTIVE)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -109,6 +110,12 @@ enum TaskPriority {
   MEDIUM
   HIGH
   URGENT
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
 }
 
 model Task {

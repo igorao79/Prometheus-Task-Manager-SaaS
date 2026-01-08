@@ -8,12 +8,14 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Mail, Crown, User } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Users, Mail, Crown, User, Settings } from "lucide-react"
 
 interface Project {
   id: string
   name: string
   description: string | null
+  status: "ACTIVE" | "COMPLETED" | "ARCHIVED"
   createdAt: string
   creator: {
     name: string | null
@@ -52,6 +54,7 @@ export function ProjectDetailsModal({
   onUpdate
 }: ProjectDetailsModalProps) {
   const [members, setMembers] = useState<ProjectMember[]>([])
+  const [projectStatus, setProjectStatus] = useState(project.status)
   const [inviteEmail, setInviteEmail] = useState("")
   const [isInviting, setIsInviting] = useState(false)
   const [inviteError, setInviteError] = useState("")
@@ -59,9 +62,10 @@ export function ProjectDetailsModal({
 
   useEffect(() => {
     if (isOpen) {
+      setProjectStatus(project.status)
       fetchMembers()
     }
-  }, [isOpen, project.id])
+  }, [isOpen, project.id, project.status])
 
   const fetchMembers = async () => {
     try {
@@ -112,6 +116,27 @@ export function ProjectDetailsModal({
     }
   }
 
+  const handleStatusChange = async (newStatus: "ACTIVE" | "COMPLETED" | "ARCHIVED") => {
+    try {
+      const response = await fetch(`/api/projects/${project.id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (response.ok) {
+        setProjectStatus(newStatus)
+        onUpdate() // Refresh projects list
+      } else {
+        console.error("Failed to update project status")
+      }
+    } catch (error) {
+      console.error("Error updating project status:", error)
+    }
+  }
+
   const isAdmin = members.some(member =>
     member.user.id === userId && member.role === "admin"
   )
@@ -147,6 +172,29 @@ export function ProjectDetailsModal({
             </Card>
           </div>
 
+          {/* Project Status */}
+          {isAdmin && (
+            <div>
+              <h3 className="text-lg font-heading mb-4 flex items-center">
+                <Settings className="w-5 h-5 mr-2" />
+                Статус проекта
+              </h3>
+              <div className="space-y-2">
+                <Label htmlFor="project-status">Статус</Label>
+                <Select value={projectStatus} onValueChange={handleStatusChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Выберите статус" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">Активный</SelectItem>
+                    <SelectItem value="COMPLETED">Завершен</SelectItem>
+                    <SelectItem value="ARCHIVED">Архивирован</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
           {/* Members List */}
           <div>
             <h3 className="text-lg font-heading mb-4 flex items-center">
@@ -157,11 +205,11 @@ export function ProjectDetailsModal({
             {isLoadingMembers ? (
               <div className="space-y-2">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-3 p-3 rounded-lg bg-slate-50 animate-pulse">
-                    <div className="w-8 h-8 bg-slate-200 rounded-full"></div>
+                  <div key={i} className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30 animate-pulse">
+                    <div className="w-8 h-8 bg-muted rounded-full"></div>
                     <div className="flex-1">
-                      <div className="h-4 bg-slate-200 rounded w-32"></div>
-                      <div className="h-3 bg-slate-200 rounded w-48 mt-1"></div>
+                      <div className="h-4 bg-muted rounded w-32"></div>
+                      <div className="h-3 bg-muted rounded w-48 mt-1"></div>
                     </div>
                   </div>
                 ))}
@@ -169,7 +217,7 @@ export function ProjectDetailsModal({
             ) : (
               <div className="space-y-2">
                 {members.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                  <div key={member.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                     <div className="flex items-center space-x-3">
                       <Avatar className="w-8 h-8">
                         <AvatarImage src="" />
@@ -219,7 +267,7 @@ export function ProjectDetailsModal({
               <form onSubmit={handleInvite} className="space-y-4">
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <Label htmlFor="invite-email">Email пользователя</Label>
+                    <Label htmlFor="invite-email" className="mb-2 block">Email пользователя</Label>
                     <Input
                       id="invite-email"
                       type="email"

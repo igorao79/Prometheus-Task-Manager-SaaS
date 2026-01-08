@@ -116,8 +116,9 @@ export function Header() {
               {/* Mobile Navigation */}
             <div className="flex items-center space-x-1">
               {/* Mobile Menu Button (Pill Nav Style) */}
-              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <SheetTrigger asChild>
+              <div suppressHydrationWarning>
+                <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild suppressHydrationWarning>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -183,6 +184,7 @@ export function Header() {
                   </div>
                 </SheetContent>
               </Sheet>
+              </div>
 
 
               {/* User Avatar / Auth Buttons */}

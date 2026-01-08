@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { motion, useMotionValue, useTransform, animate } from "framer-motion"
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 
 // Typewriter component
 function TypewriterText() {
@@ -53,6 +54,7 @@ function TypewriterText() {
 }
 
 export function HeroSection() {
+  const { data: session } = useSession()
   return (
     <motion.section
       className="py-20 px-4"
@@ -106,12 +108,14 @@ export function HeroSection() {
             <Button size="lg" asChild>
               <Link href="/pricing">Начать бесплатно</Link>
             </Button>
-            <Button variant="outline" size="lg" onClick={() => {
-              const event = new CustomEvent('open-signin-modal')
-              window.dispatchEvent(event)
-            }}>
-              Войти в аккаунт
-            </Button>
+            {!session?.user && (
+              <Button variant="outline" size="lg" onClick={() => {
+                const event = new CustomEvent('open-signin-modal')
+                window.dispatchEvent(event)
+              }}>
+                Войти в аккаунт
+              </Button>
+            )}
           </motion.div>
         </motion.div>
 
