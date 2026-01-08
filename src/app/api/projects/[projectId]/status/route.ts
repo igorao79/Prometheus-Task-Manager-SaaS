@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { ProjectStatus } from "@/generated/prisma/enums"
 export async function PUT(
   request: NextRequest,
   { params }: { params: { projectId: string } }
@@ -54,7 +55,7 @@ export async function PUT(
     try {
       const updatedProject = await prisma.project.update({
         where: { id: projectId },
-        data: { status } as any,
+        data: { status: status as ProjectStatus },
       include: {
         creator: {
           select: {
@@ -70,7 +71,7 @@ export async function PUT(
         },
       },
       })
-      console.log("Project updated successfully:", updatedProject.id, (updatedProject as any).status)
+      console.log("Project updated successfully:", updatedProject.id, updatedProject.status)
 
       return NextResponse.json(updatedProject)
     } catch (dbError) {

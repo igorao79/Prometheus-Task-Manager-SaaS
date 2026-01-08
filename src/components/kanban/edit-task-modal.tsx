@@ -305,7 +305,7 @@ export function EditTaskModal({
           <AlertDialogHeader>
             <AlertDialogTitle>Удалить задачу</AlertDialogTitle>
             <AlertDialogDescription>
-              Вы уверены, что хотите удалить задачу "{title}"?
+              Вы уверены, что хотите удалить задачу &quot;{title}&quot;?
               Это действие нельзя отменить.
             </AlertDialogDescription>
           </AlertDialogHeader>

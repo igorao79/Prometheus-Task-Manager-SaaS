@@ -18,6 +18,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
+// Функция для правильного склонения слова "участник"
+function getMembersText(count: number): string {
+  if (count % 10 === 1 && count % 100 !== 11) {
+    return `${count} участник`
+  } else if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+    return `${count} участника`
+  } else {
+    return `${count} участников`
+  }
+}
+
 interface Project {
   id: string
   name: string
@@ -82,7 +93,7 @@ export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
             <div className="flex items-center">
               <Users className="w-4 h-4 mr-1" />
-              {project._count.members} участников
+              {getMembersText(project._count.members)}
             </div>
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-1" />

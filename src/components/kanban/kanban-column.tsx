@@ -27,20 +27,6 @@ interface Task {
     email: string
   } | null
 }
-
-interface ProjectMember {
-  id: string
-  joinedAt: Date
-  role: string
-  userId: string
-  projectId: string
-  user: {
-    id: string
-    name: string | null
-    email: string
-  }
-}
-
 interface KanbanColumnProps {
   id: string
   title: string

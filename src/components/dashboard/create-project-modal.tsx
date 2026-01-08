@@ -21,11 +21,10 @@ interface CreatedProject {
 interface CreateProjectModalProps {
   isOpen: boolean
   onClose: () => void
-  userId: string
   onProjectCreated: (project: CreatedProject) => void
 }
 
-export function CreateProjectModal({ isOpen, onClose, userId, onProjectCreated }: CreateProjectModalProps) {
+export function CreateProjectModal({ isOpen, onClose, onProjectCreated }: CreateProjectModalProps) {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -60,7 +59,7 @@ export function CreateProjectModal({ isOpen, onClose, userId, onProjectCreated }
       const newProject = await response.json()
 
       // Форматируем проект для соответствия интерфейсу
-      const formattedProject: Project = {
+      const formattedProject: CreatedProject = {
         id: newProject.id,
         name: newProject.name,
         description: newProject.description,

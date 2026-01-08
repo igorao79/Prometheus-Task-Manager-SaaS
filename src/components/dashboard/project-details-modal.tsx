@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Users, Mail, Crown, User, Settings } from "lucide-react"
 
@@ -60,14 +60,7 @@ export function ProjectDetailsModal({
   const [inviteError, setInviteError] = useState("")
   const [isLoadingMembers, setIsLoadingMembers] = useState(true)
 
-  useEffect(() => {
-    if (isOpen) {
-      setProjectStatus(project.status)
-      fetchMembers()
-    }
-  }, [isOpen, project.id, project.status])
-
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
       const response = await fetch(`/api/projects/${project.id}/members`)
       if (response.ok) {
@@ -79,7 +72,14 @@ export function ProjectDetailsModal({
     } finally {
       setIsLoadingMembers(false)
     }
-  }
+  }, [project.id])
+
+  useEffect(() => {
+    if (isOpen) {
+      setProjectStatus(project.status)
+      fetchMembers()
+    }
+  }, [isOpen, project.id, project.status, fetchMembers])
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()

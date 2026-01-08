@@ -64,7 +64,6 @@ export function PricingSection() {
       fetchUserTarif()
     } else {
       // No session, reset tarif
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserTarif(null)
     }
   }, [session?.user?.id, fetchUserTarif])

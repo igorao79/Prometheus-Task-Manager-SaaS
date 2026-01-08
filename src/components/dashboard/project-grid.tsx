@@ -99,7 +99,6 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
         <CreateProjectModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
-          userId={userId}
           onProjectCreated={(newProject) => {
             // Transform to full Project type
             const fullProject: Project = {
@@ -158,7 +157,6 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
       <CreateProjectModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        userId={userId}
         onProjectCreated={(newProject) => {
           // Transform to full Project type
           const fullProject: Project = {

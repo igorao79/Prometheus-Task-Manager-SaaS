@@ -32,8 +32,9 @@ export default function Dashboard() {
       return
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProjects()
-  }, [session, status, fetchProjects])
+  }, [session, status]) // fetchProjects is memoized and depends on session
 
   if (status === "loading") {
     return (

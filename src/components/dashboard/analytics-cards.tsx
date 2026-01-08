@@ -65,10 +65,6 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
   const handleCardClick = (status: string) => {
     console.log("=== HANDLE CARD CLICK ===")
     console.log("Clicked card status:", status)
-    if (status === "TODO") {
-      console.log("Ignoring TODO status")
-      return // Не позволяем менять статус задач "К выполнению"
-    }
 
     setSelectedStatus(status)
     setShowTaskModal(true)
@@ -173,15 +169,16 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
         return (
           <Card
             key={card.title}
-            className={`${card.bgColor} border-0 ${card.title !== "К выполнению" ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
+            className={`${card.bgColor} border-0 ${card.title !== "Всего задач" ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
             onClick={() => {
               console.log("Card clicked, title:", `"${card.title}"`, "length:", card.title.length)
               const trimmedTitle = card.title.trim()
               console.log("Trimmed title:", `"${trimmedTitle}"`)
 
-              if (trimmedTitle !== "К выполнению" && trimmedTitle !== "Всего задач") {
+              if (trimmedTitle !== "Всего задач") {
                 let status = ""
-                if (trimmedTitle === "В работе") status = "IN_PROGRESS"
+                if (trimmedTitle === "К выполнению") status = "TODO"
+                else if (trimmedTitle === "В работе") status = "IN_PROGRESS"
                 else if (trimmedTitle === "Проверка") status = "REVIEW"
                 else if (trimmedTitle === "Готово") status = "DONE"
                 else {
@@ -194,7 +191,7 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
                   handleCardClick(status)
                 }
               } else {
-                console.log("Ignoring 'К выполнению' card")
+                console.log("Ignoring 'Всего задач' card")
               }
             }}
           >
@@ -208,9 +205,9 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
               <div className="text-2xl font-bold text-foreground">
                 {card.value}
               </div>
-              {card.title !== "К выполнению" && card.value > 0 && (
+              {card.value > 0 && card.title !== "Всего задач" && (
                 <div className="text-xs text-muted-foreground mt-1">
-                  Нажмите для управления
+                  {card.title === "К выполнению" ? "Нажмите для просмотра" : "Нажмите для управления"}
                 </div>
               )}
             </CardContent>
@@ -265,6 +262,11 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
                   <p className="text-sm text-muted-foreground">{task.projectName}</p>
                 </div>
                 <div className="flex gap-2">
+                  {selectedStatus === "TODO" && (
+                    <span className="text-xs text-muted-foreground italic">
+                      Задачи в статусе &quot;К выполнению&quot; нельзя переместить
+                    </span>
+                  )}
                   {selectedStatus === "IN_PROGRESS" && (
                     <>
                       <Button

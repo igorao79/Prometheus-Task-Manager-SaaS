@@ -43,7 +43,7 @@ export function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignInModalPr
         onClose()
         // Сессия обновится автоматически через SessionProvider
       }
-    } catch (error) {
+    } catch {
       setError("Произошла ошибка при входе")
     } finally {
       setIsLoading(false)

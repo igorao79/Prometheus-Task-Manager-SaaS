@@ -4,13 +4,13 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { motion, useMotionValue, useTransform, animate } from "framer-motion"
-import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
+import { useEffect, useState, useMemo } from "react"
 import { useSession } from "next-auth/react"
 
 // Typewriter component
 function TypewriterText() {
-  const words = ["эффективно", "быстро", "качественно"]
+  const words = useMemo(() => ["эффективно", "быстро", "качественно"], [])
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [currentText, setCurrentText] = useState("")
   const [isDeleting, setIsDeleting] = useState(false)
