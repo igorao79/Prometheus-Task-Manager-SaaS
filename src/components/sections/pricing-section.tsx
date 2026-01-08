@@ -29,6 +29,7 @@ export function PricingSection() {
         setUserTarif(null)
       }
     } catch (error) {
+      console.error('Error fetching user tarif:', error)
       setUserTarif(null)
     }
   }, [])
@@ -46,11 +47,13 @@ export function PricingSection() {
       if (response.ok) {
         const data = await response.json()
         setUserTarif(data.tarif)
-        // Перезагружаем страницу для гарантированного обновления сессии с новым тарифом
-        window.location.reload()
+        // Отправляем событие обновления сессии
+        const event = new CustomEvent('session-update')
+        window.dispatchEvent(event)
       } else {
       }
     } catch (error) {
+      console.error('Error updating user tarif:', error)
     }
   }, [])
 
@@ -65,6 +68,13 @@ export function PricingSection() {
   }, [session?.user?.id, fetchUserTarif])
 
   const handleStartTrial = (plan: 'free' | 'prof' | 'corp') => {
+    if (!session?.user) {
+      // Если пользователь не авторизован, открываем модалку логина
+      // Используем ту же логику, что и у кнопки "Связаться с нами"
+      const event = new CustomEvent('open-contact-modal')
+      window.dispatchEvent(event)
+      return
+    }
     setTrialModal({ isOpen: true, plan })
   }
 
@@ -152,12 +162,22 @@ export function PricingSection() {
                   Экспорт данных
                 </li>
               </ul>
-              <Button
-                className="w-full mt-6"
-                onClick={() => handleStartTrial('prof')}
-              >
-                Начать 14 дней бесплатно
-              </Button>
+              {userTarif === 'prof' ? (
+                <Button
+                  className="w-full mt-6"
+                  variant="outline"
+                  onClick={() => updateUserTarif('free')}
+                >
+                  Отказаться
+                </Button>
+              ) : (
+                <Button
+                  className="w-full mt-6"
+                  onClick={() => handleStartTrial('prof')}
+                >
+                  Начать 14 дней бесплатно
+                </Button>
+              )}
               {userTarif === 'prof' && (
                 <p className="text-center text-blue-600 font-medium mt-2">
                   Ваш текущий план
@@ -202,16 +222,26 @@ export function PricingSection() {
                   SLA гарантированная доступность
                 </li>
               </ul>
-              <Button
-                className="w-full mt-6"
-                variant="outline"
-                onClick={() => {
-                  const event = new CustomEvent('open-contact-modal')
-                  window.dispatchEvent(event)
-                }}
-              >
-                Связаться с нами
-              </Button>
+              {userTarif === 'corp' ? (
+                <Button
+                  className="w-full mt-6"
+                  variant="outline"
+                  onClick={() => updateUserTarif('free')}
+                >
+                  Отказаться
+                </Button>
+              ) : (
+                <Button
+                  className="w-full mt-6"
+                  variant="outline"
+                  onClick={() => {
+                    const event = new CustomEvent('open-contact-modal')
+                    window.dispatchEvent(event)
+                  }}
+                >
+                  Связаться с нами
+                </Button>
+              )}
               {userTarif === 'corp' && (
                 <p className="text-center text-blue-600 font-medium mt-2">
                   Ваш текущий план

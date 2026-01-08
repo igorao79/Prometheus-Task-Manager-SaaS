@@ -36,6 +36,7 @@ export async function GET() {
 
     return NextResponse.json(projects)
   } catch (error) {
+    console.error("Error fetching dashboard projects:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

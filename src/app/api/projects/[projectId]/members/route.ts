@@ -90,6 +90,7 @@ export async function POST(
 
     return NextResponse.json(newMember, { status: 201 })
   } catch (error) {
+    console.error("Error inviting member:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }
@@ -148,6 +149,85 @@ export async function GET(
 
     return NextResponse.json(members)
   } catch (error) {
+    console.error("Error fetching members:", error)
+    return NextResponse.json(
+      { error: "Внутренняя ошибка сервера" },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Не авторизован" },
+        { status: 401 }
+      )
+    }
+
+    const { projectId } = await params
+    const url = new URL(_request.url)
+    const memberId = url.searchParams.get('memberId')
+
+    if (!memberId) {
+      return NextResponse.json(
+        { error: "ID участника обязателен" },
+        { status: 400 }
+      )
+    }
+
+    // Проверяем, что текущий пользователь является админом проекта
+    const currentUserMembership = await prisma.projectMember.findFirst({
+      where: {
+        projectId,
+        userId: session.user.id,
+        role: "admin",
+      },
+    })
+
+    if (!currentUserMembership) {
+      return NextResponse.json(
+        { error: "Недостаточно прав для удаления участников" },
+        { status: 403 }
+      )
+    }
+
+    // Нельзя удалить админа проекта
+    const memberToDelete = await prisma.projectMember.findUnique({
+      where: { id: memberId },
+      include: { user: true },
+    })
+
+    if (!memberToDelete) {
+      return NextResponse.json(
+        { error: "Участник не найден" },
+        { status: 404 }
+      )
+    }
+
+    if (memberToDelete.role === "admin") {
+      return NextResponse.json(
+        { error: "Нельзя удалить админа проекта" },
+        { status: 400 }
+      )
+    }
+
+    // Удаляем участника
+    await prisma.projectMember.delete({
+      where: { id: memberId },
+    })
+
+    return NextResponse.json({
+      message: `Участник ${memberToDelete.user.email} успешно удален из проекта`,
+    })
+  } catch (error) {
+    console.error("Error removing member:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

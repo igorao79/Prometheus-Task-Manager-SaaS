@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Users, Mail, Crown, User, Settings } from "lucide-react"
+import { Users, Mail, Crown, User, Settings, X } from "lucide-react"
 
 interface Project {
   id: string
@@ -68,6 +68,7 @@ export function ProjectDetailsModal({
         setMembers(membersData)
       }
     } catch (error) {
+      console.error("Error fetching members:", error)
     } finally {
       setIsLoadingMembers(false)
     }
@@ -130,6 +131,23 @@ export function ProjectDetailsModal({
       } else {
       }
     } catch (error) {
+      console.error("Error updating project status:", error)
+    }
+  }
+
+  const handleRemoveMember = async (memberId: string) => {
+    try {
+      const response = await fetch(`/api/projects/${project.id}/members?memberId=${memberId}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        // Обновляем список участников
+        await fetchMembers()
+      } else {
+      }
+    } catch (error) {
+      console.error("Error updating project status:", error)
     }
   }
 
@@ -242,9 +260,21 @@ export function ProjectDetailsModal({
                           </>
                         )}
                       </Badge>
-                      <span className="text-xs text-muted-foreground/70">
-                        {new Date(member.joinedAt).toLocaleDateString("ru-RU")}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground/70">
+                          {new Date(member.joinedAt).toLocaleDateString("ru-RU")}
+                        </span>
+                        {isAdmin && member.role !== "admin" && member.user.id !== userId && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveMember(member.id)}
+                            className="h-6 w-6 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

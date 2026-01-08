@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
                 tarif: user.tarif,
               }
         } catch (error) {
+          console.error("Error in authorize function:", error)
           return null
         }
       }
@@ -100,6 +101,7 @@ export const authOptions: NextAuthOptions = {
             token.picture = freshUser.image
           }
         } catch (error) {
+          console.error("Error in jwt callback:", error)
         }
       }
 
@@ -125,6 +127,7 @@ export const authOptions: NextAuthOptions = {
             session.user.image = user.image
           }
         } catch (error) {
+          console.error("Error in session callback:", error)
           session.user.tarif = token.tarif as string || 'free'
         }
       }

@@ -151,6 +151,7 @@ export function KanbanBoard({
         throw new Error("Failed to update task status")
       }
     } catch (error) {
+      console.error("Error updating task status:", error)
 
       // 🔁 Откатываем изменения при ошибке сервера
       setTasks(prevTasks =>
@@ -184,6 +185,7 @@ export function KanbanBoard({
       } else {
       }
     } catch (error) {
+      console.error("Error deleting task:", error)
     }
   }
 

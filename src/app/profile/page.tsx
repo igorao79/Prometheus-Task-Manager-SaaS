@@ -72,6 +72,7 @@ export default function ProfilePage() {
         })
       }
     } catch (error) {
+      console.error("Error fetching profile:", error)
       setNotification({
         isOpen: true,
         type: "error",
@@ -169,6 +170,7 @@ export default function ProfilePage() {
         }
       }
     } catch (error) {
+      console.error("Error updating profile:", error)
       setNotification({
         isOpen: true,
         type: "error",

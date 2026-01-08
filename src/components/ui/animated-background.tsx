@@ -8,20 +8,20 @@ export function AnimatedBackground() {
       <svg
         className="absolute inset-0 w-full h-full"
         xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1200 800"
-        preserveAspectRatio="xMidYMid meet"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid slice"
       >
         {/* Большой блюренный круг */}
         <motion.circle
-          cx="200"
-          cy="150"
-          r="120"
+          cx="20"
+          cy="15"
+          r="12"
           fill="rgba(59, 130, 246, 0.15)"
-          filter="blur(20px)"
+          filter="blur(2px)"
           initial={{ x: 0, y: 0 }}
           animate={{
-            x: [0, 30, -20, 0],
-            y: [0, -40, 20, 0],
+            x: [0, 3, -2, 0],
+            y: [0, -4, 2, 0],
           }}
           transition={{
             duration: 20,
@@ -32,16 +32,16 @@ export function AnimatedBackground() {
 
         {/* Средний круг с плавной анимацией */}
         <motion.circle
-          cx="800"
-          cy="300"
-          r="80"
+          cx="80"
+          cy="30"
+          r="8"
           fill="rgba(147, 51, 234, 0.12)"
-          filter="blur(15px)"
+          filter="blur(1.5px)"
           initial={{ scale: 1 }}
           animate={{
             scale: [1, 1.1, 1],
-            x: [0, -50, 30, 0],
-            y: [0, 40, -30, 0],
+            x: [0, -5, 3, 0],
+            y: [0, 4, -3, 0],
           }}
           transition={{
             duration: 15,
@@ -52,15 +52,15 @@ export function AnimatedBackground() {
 
         {/* Маленький круг */}
         <motion.circle
-          cx="600"
-          cy="500"
-          r="60"
+          cx="60"
+          cy="50"
+          r="6"
           fill="rgba(16, 185, 129, 0.1)"
-          filter="blur(25px)"
+          filter="blur(2.5px)"
           initial={{ x: 0, y: 0 }}
           animate={{
-            x: [0, 40, -30, 0],
-            y: [0, -50, 40, 0],
+            x: [0, 4, -3, 0],
+            y: [0, -5, 4, 0],
           }}
           transition={{
             duration: 18,
@@ -71,18 +71,18 @@ export function AnimatedBackground() {
 
         {/* Прямоугольник */}
         <motion.rect
-          x="100"
-          y="400"
-          width="150"
-          height="100"
-          rx="20"
+          x="10"
+          y="40"
+          width="15"
+          height="10"
+          rx="2"
           fill="rgba(245, 101, 101, 0.08)"
-          filter="blur(35px)"
+          filter="blur(3.5px)"
           initial={{ rotate: 0 }}
           animate={{
             rotate: [0, 5, 0],
-            x: [0, 20, -15, 0],
-            y: [0, -30, 25, 0],
+            x: [0, 2, -1.5, 0],
+            y: [0, -3, 2.5, 0],
           }}
           transition={{
             duration: 22,
@@ -93,15 +93,15 @@ export function AnimatedBackground() {
 
         {/* Еще один круг с медленным движением */}
         <motion.circle
-          cx="1000"
-          cy="200"
-          r="90"
+          cx="90"
+          cy="20"
+          r="9"
           fill="rgba(251, 191, 36, 0.07)"
-          filter="blur(45px)"
+          filter="blur(4.5px)"
           initial={{ x: 0, y: 0 }}
           animate={{
-            x: [0, -60, 40, 0],
-            y: [0, 35, -45, 0],
+            x: [0, -6, 4, 0],
+            y: [0, 3.5, -4.5, 0],
           }}
           transition={{
             duration: 25,
@@ -112,19 +112,19 @@ export function AnimatedBackground() {
 
         {/* Маленький прямоугольник */}
         <motion.rect
-          x="300"
-          y="600"
-          width="80"
-          height="60"
-          rx="15"
+          x="30"
+          y="60"
+          width="8"
+          height="6"
+          rx="1.5"
           fill="rgba(139, 69, 19, 0.06)"
-          filter="blur(20px)"
+          filter="blur(2px)"
           initial={{ scale: 1 }}
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, -10, 0],
-            x: [0, 25, -20, 0],
-            y: [0, -35, 30, 0],
+            x: [0, 2.5, -2, 0],
+            y: [0, -3.5, 3, 0],
           }}
           transition={{
             duration: 16,
@@ -135,16 +135,16 @@ export function AnimatedBackground() {
 
         {/* Большой овал */}
         <motion.ellipse
-          cx="500"
-          cy="100"
-          rx="180"
-          ry="90"
+          cx="50"
+          cy="10"
+          rx="18"
+          ry="9"
           fill="rgba(6, 182, 212, 0.06)"
-          filter="blur(50px)"
+          filter="blur(5px)"
           initial={{ x: 0, y: 0 }}
           animate={{
-            x: [0, 50, -40, 0],
-            y: [0, -60, 45, 0],
+            x: [0, 5, -4, 0],
+            y: [0, -6, 4.5, 0],
           }}
           transition={{
             duration: 28,
@@ -155,16 +155,16 @@ export function AnimatedBackground() {
 
         {/* Маленький круг с быстрой анимацией */}
         <motion.circle
-          cx="900"
-          cy="600"
-          r="40"
+          cx="85"
+          cy="70"
+          r="4"
           fill="rgba(236, 72, 153, 0.1)"
-          filter="blur(15px)"
+          filter="blur(1.5px)"
           initial={{ scale: 1 }}
           animate={{
             scale: [1, 1.3, 1],
-            x: [0, -20, 30, 0],
-            y: [0, 25, -35, 0],
+            x: [0, -2, 3, 0],
+            y: [0, 2.5, -3.5, 0],
           }}
           transition={{
             duration: 12,

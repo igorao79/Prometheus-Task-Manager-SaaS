@@ -72,6 +72,7 @@ export function AnalyticsCards({ projects, onTasksUpdate }: AnalyticsCardsProps)
         onTasksUpdate?.() // Обновляем данные
       }
     } catch (error) {
+      console.error("Error updating task status:", error)
     }
   }
   // Подсчитываем статистику по всем проектам пользователя

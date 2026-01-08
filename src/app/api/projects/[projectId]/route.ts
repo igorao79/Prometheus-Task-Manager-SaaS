@@ -51,6 +51,7 @@ export async function DELETE(
       message: `Проект "${project.name}" успешно удален`
     })
   } catch (error) {
+    console.error("Error deleting project:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

@@ -79,14 +79,13 @@ export function HeroSection() {
             </Badge>
           </motion.div>
           <motion.h1
-            className="text-5xl md:text-6xl font-heading text-foreground mb-6"
+            className="text-5xl md:text-6xl font-heading text-foreground mb-6 min-h-[4rem] md:min-h-[5rem]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            Управляйте задачами
-            <span className="text-primary">
-              {" "}
+            <span className="block sm:inline">Управляйте задачами</span>
+            <span className="block sm:inline text-primary ml-2">
               <TypewriterText />
             </span>
           </motion.h1>

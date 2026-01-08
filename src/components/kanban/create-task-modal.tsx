@@ -110,6 +110,7 @@ export function CreateTaskModal({
       } else {
       }
     } catch (error) {
+      console.error("Error creating task:", error)
     } finally {
       setIsSubmitting(false)
     }

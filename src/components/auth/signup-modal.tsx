@@ -70,6 +70,7 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
         setError(data.error || "Ошибка проверки email")
       }
     } catch (error) {
+      console.error("Error checking email:", error)
       setError("Ошибка проверки email")
     } finally {
       setCheckingEmail(false)
@@ -126,12 +127,19 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
 
       if (response.ok) {
         setSuccess(data.message || "Регистрация успешна! Теперь войдите в систему.")
+        // Очищаем поля формы после успешной регистрации
+        setName("")
+        setEmail("")
+        setPassword("")
+        setEmailExists(null)
+        setCheckingEmail(false)
         onClose()
         onSwitchToSignIn()
       } else {
         setError(data.error || "Ошибка регистрации")
       }
     } catch (error) {
+      console.error("Error registering user:", error)
       setError("Произошла ошибка при регистрации")
     } finally {
       setIsLoading(false)
@@ -140,7 +148,7 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader>
           <DialogTitle>Регистрация в Gorex</DialogTitle>
           <DialogDescription>
@@ -203,15 +211,16 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
             />
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
             <Button
               type="button"
               variant="ghost"
               onClick={onSwitchToSignIn}
+              className="text-sm"
             >
               Уже есть аккаунт? Войти
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="flex-1 sm:flex-initial">
               {isLoading ? "Регистрация..." : "Зарегистрироваться"}
             </Button>
           </div>

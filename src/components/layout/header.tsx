@@ -71,7 +71,7 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b bg-background backdrop-blur-sm overflow-x-hidden">
+      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur-sm overflow-x-hidden">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between min-w-0">
             <Link href="/" className="text-2xl font-heading text-foreground">
@@ -181,6 +181,9 @@ export function Header() {
                         </Link>
                       )}
                     </nav>
+                    <div className="flex justify-center pt-4 border-t border-border/20 mt-6">
+                      <ModeToggle />
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>

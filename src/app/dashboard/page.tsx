@@ -21,6 +21,7 @@ export default function Dashboard() {
         setProjectsWithTasks(projects)
       }
     } catch (error) {
+      console.error("Error fetching projects:", error)
     }
   }, [session?.user?.id])
 

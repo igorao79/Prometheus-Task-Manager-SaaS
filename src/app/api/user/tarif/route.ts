@@ -28,6 +28,7 @@ export async function GET() {
 
     return NextResponse.json({ tarif: user.tarif })
   } catch (error) {
+    console.error("Error fetching user tarif:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }
@@ -64,6 +65,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ tarif: updatedUser.tarif })
   } catch (error) {
+    console.error("Error updating user tarif:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

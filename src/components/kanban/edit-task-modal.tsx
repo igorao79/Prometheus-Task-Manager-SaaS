@@ -131,6 +131,7 @@ export function EditTaskModal({
       } else {
       }
     } catch (error) {
+      console.error("Error updating task:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -151,6 +152,7 @@ export function EditTaskModal({
       } else {
       }
     } catch (error) {
+      console.error("Error deleting task:", error)
     } finally {
       setIsDeleting(false)
       setShowDeleteDialog(false)

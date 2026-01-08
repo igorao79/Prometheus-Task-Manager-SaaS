@@ -67,12 +67,14 @@ export async function PUT(
 
       return NextResponse.json(updatedProject)
     } catch (dbError) {
+      console.error("Database error:", dbError)
       return NextResponse.json(
         { error: "Ошибка базы данных" },
         { status: 500 }
       )
     }
   } catch (error) {
+    console.error("Error updating project status:", error)
     return NextResponse.json(
       { error: "Внутренняя ошибка сервера" },
       { status: 500 }

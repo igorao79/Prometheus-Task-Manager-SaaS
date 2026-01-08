@@ -54,6 +54,7 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
       } else {
       }
     } catch (error) {
+      console.error("Error fetching projects:", error)
     } finally {
       setIsLoading(false)
     }

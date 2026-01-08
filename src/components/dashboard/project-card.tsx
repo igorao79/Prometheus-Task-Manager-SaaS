@@ -88,6 +88,7 @@ export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
         })
       }
     } catch (error) {
+      console.error("Error deleting project:", error)
       setNotification({
         isOpen: true,
         type: "error",
