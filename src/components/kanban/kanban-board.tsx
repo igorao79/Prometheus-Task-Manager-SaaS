@@ -9,6 +9,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  defaultDropAnimation,
 } from "@dnd-kit/core"
 import { KanbanColumn } from "./kanban-column"
 import { TaskCard } from "./task-card"
@@ -61,6 +62,9 @@ interface KanbanBoardProps {
   userRole: string
   userId: string
 }
+
+// Простая анимация дропа
+const dropAnimation = defaultDropAnimation
 
 export function KanbanBoard({
   projectId,
@@ -122,6 +126,18 @@ export function KanbanBoard({
       return
     }
 
+    // ✅ 1. СРАЗУ обновляем UI (optimistic update)
+    setTasks(prevTasks =>
+      prevTasks.map(t =>
+        t.id === taskId
+          ? { ...t, status: newStatus, updatedAt: new Date() }
+          : t
+      )
+    )
+
+    setActiveTask(null)
+
+    // ✅ 2. Асинхронно сохраняем на сервере
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: "PUT",
@@ -131,23 +147,21 @@ export function KanbanBoard({
         body: JSON.stringify({ status: newStatus }),
       })
 
-      if (response.ok) {
-        // Обновляем локальное состояние задач
-        setTasks(prevTasks =>
-          prevTasks.map(t =>
-            t.id === taskId
-              ? { ...t, status: newStatus, updatedAt: new Date() }
-              : t
-          )
-        )
-      } else {
-        console.error("Failed to update task status")
+      if (!response.ok) {
+        throw new Error("Failed to update task status")
       }
     } catch (error) {
-      console.error("Error updating task status:", error)
-    }
+      console.error("Failed to update task status on server:", error)
 
-    setActiveTask(null)
+      // 🔁 Откатываем изменения при ошибке сервера
+      setTasks(prevTasks =>
+        prevTasks.map(t =>
+          t.id === taskId
+            ? { ...t, status: task.status } // Возвращаем старый статус
+            : t
+        )
+      )
+    }
   }
 
   const handleEditTask = (task: Task) => {
@@ -236,7 +250,7 @@ export function KanbanBoard({
           />
         </div>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={dropAnimation}>
           {activeTask ? (
             <TaskCard
               task={activeTask}

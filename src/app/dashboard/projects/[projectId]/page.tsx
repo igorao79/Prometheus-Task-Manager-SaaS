@@ -15,7 +15,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
-    redirect("/auth/signin")
+    redirect("/")
   }
 
   const { projectId } = await params

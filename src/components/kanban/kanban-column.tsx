@@ -89,9 +89,9 @@ export function KanbanColumn({ id, title, tasks, count, onEditTask, onDeleteTask
     <div
       ref={setNodeRef}
       className={`
-        flex flex-col min-h-[600px] border-2 rounded-lg p-4 transition-colors
+        flex flex-col min-h-[600px] border-2 rounded-lg p-4 transition-all duration-300 ease-out
         ${getColumnColor(id)}
-        ${isOver ? "ring-2 ring-primary ring-opacity-50" : ""}
+        ${isOver ? "ring-2 ring-primary ring-opacity-50 scale-[1.02] shadow-lg bg-primary/5" : ""}
       `}
     >
       <div className="flex items-center justify-between mb-4">
@@ -103,15 +103,27 @@ export function KanbanColumn({ id, title, tasks, count, onEditTask, onDeleteTask
         </Badge>
       </div>
 
-      <div className="flex-1 space-y-3">
-        {tasks.map((task) => (
-          <TaskCard
+      <div className="flex-1 space-y-3 transition-all duration-300">
+        {tasks.map((task, index) => (
+          <div
             key={task.id}
-            task={task}
-            onEdit={onEditTask}
-            onDelete={onDeleteTask}
-          />
+            className="animate-in slide-in-from-top-2 fade-in duration-300"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <div className="transition-all duration-200 hover:scale-[1.02]">
+              <TaskCard
+                task={task}
+                onEdit={onEditTask}
+                onDelete={onDeleteTask}
+              />
+            </div>
+          </div>
         ))}
+        {tasks.length === 0 && isOver && (
+          <div className="flex items-center justify-center h-32 text-muted-foreground text-sm border-2 border-dashed border-primary/50 rounded-lg bg-primary/5 animate-in fade-in duration-200">
+            Перетащите задачу сюда
+          </div>
+        )}
       </div>
     </div>
   )

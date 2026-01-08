@@ -88,8 +88,8 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       ref={setNodeRef}
       style={style}
       className={`
-        cursor-grab active:cursor-grabbing transition-shadow hover:shadow-md
-        ${isDragging ? "opacity-50 shadow-lg" : ""}
+        cursor-grab active:cursor-grabbing transition-all duration-300 ease-out hover:shadow-md
+        ${isDragging ? "opacity-50 shadow-lg rotate-2 scale-105" : ""}
         ${isOverdue ? "border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950" : ""}
       `}
       suppressHydrationWarning
