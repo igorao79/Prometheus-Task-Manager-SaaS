@@ -149,7 +149,7 @@ export function ProjectDetailsModal({
 
           {/* Members List */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
+            <h3 className="text-lg font-heading mb-4 flex items-center">
               <Users className="w-5 h-5 mr-2" />
               Участники проекта
             </h3>
@@ -211,7 +211,7 @@ export function ProjectDetailsModal({
           {/* Invite Form - only for admins */}
           {isAdmin && (
             <div>
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
+              <h3 className="text-lg font-heading mb-4 flex items-center">
                 <Mail className="w-5 h-5 mr-2" />
                 Пригласить участника
               </h3>

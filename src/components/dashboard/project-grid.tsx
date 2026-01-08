@@ -76,7 +76,7 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
         <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
           <Plus className="w-12 h-12 text-muted-foreground" />
         </div>
-        <h2 className="text-2xl font-semibold text-foreground mb-2">
+        <h2 className="text-2xl font-heading text-foreground mb-2">
           Нет проектов
         </h2>
         <p className="text-muted-foreground mb-6">
@@ -110,7 +110,7 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-foreground">Мои проекты</h2>
+        <h2 className="text-xl font-heading text-foreground">Мои проекты</h2>
         <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Создать проект

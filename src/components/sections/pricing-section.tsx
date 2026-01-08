@@ -1,16 +1,83 @@
 "use client"
 
+import { useState, useEffect, useCallback } from "react"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check } from "lucide-react"
+import { TrialSuccessModal } from "@/components/ui/trial-success-modal"
 
 export function PricingSection() {
+  const { data: session } = useSession()
+  const [userTarif, setUserTarif] = useState<string | null>(null)
+  const [trialModal, setTrialModal] = useState<{ isOpen: boolean; plan: 'free' | 'prof' | 'corp' }>({
+    isOpen: false,
+    plan: 'free'
+  })
+
+  const fetchUserTarif = useCallback(async () => {
+    try {
+      const response = await fetch('/api/user/tarif')
+      if (response.ok) {
+        const data = await response.json()
+        setUserTarif(data.tarif)
+      } else if (response.status === 401) {
+        // User not authorized, don't show current plan
+        setUserTarif(null)
+      } else {
+        console.error('Failed to fetch user tarif:', response.statusText)
+        setUserTarif(null)
+      }
+    } catch (error) {
+      console.error('Error fetching user tarif:', error)
+      setUserTarif(null)
+    }
+  }, [])
+
+  const updateUserTarif = useCallback(async (newTarif: 'free' | 'prof' | 'corp') => {
+    try {
+      const response = await fetch('/api/user/tarif', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tarif: newTarif }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setUserTarif(data.tarif)
+        // Перезагружаем страницу для гарантированного обновления сессии с новым тарифом
+        window.location.reload()
+      } else {
+        console.error('Failed to update user tarif:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error updating user tarif:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchUserTarif()
+    } else {
+      // No session, reset tarif
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUserTarif(null)
+    }
+  }, [session?.user?.id, fetchUserTarif])
+
+  const handleStartTrial = (plan: 'free' | 'prof' | 'corp') => {
+    setTrialModal({ isOpen: true, plan })
+  }
+
   return (
     <section id="pricing" className="py-20 px-4 bg-background">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-4xl font-heading text-foreground mb-4">
             Тарифы
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -21,7 +88,7 @@ export function PricingSection() {
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <Card className="border-2">
             <CardHeader className="text-center pb-8">
-              <CardTitle className="text-2xl">Бесплатный</CardTitle>
+              <CardTitle className="text-3xl">Free</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$0</span>
                 <span className="text-muted-foreground/70 ml-1">/ месяц</span>
@@ -50,6 +117,11 @@ export function PricingSection() {
               <Button className="w-full mt-6" variant="outline">
                 Выбрать бесплатный
               </Button>
+              {userTarif === 'free' && (
+                <p className="text-center text-blue-600 font-medium mt-2">
+                  Ваш текущий план
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -58,7 +130,7 @@ export function PricingSection() {
               Популярный
             </Badge>
             <CardHeader className="text-center pb-8">
-              <CardTitle className="text-2xl">Профессиональный</CardTitle>
+              <CardTitle className="text-3xl">Pro</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$9</span>
                 <span className="text-muted-foreground/70 ml-1">/ месяц</span>
@@ -88,15 +160,23 @@ export function PricingSection() {
                   Экспорт данных
                 </li>
               </ul>
-              <Button className="w-full mt-6">
+              <Button
+                className="w-full mt-6"
+                onClick={() => handleStartTrial('prof')}
+              >
                 Начать 14 дней бесплатно
               </Button>
+              {userTarif === 'prof' && (
+                <p className="text-center text-blue-600 font-medium mt-2">
+                  Ваш текущий план
+                </p>
+              )}
             </CardContent>
           </Card>
 
           <Card className="border-2">
             <CardHeader className="text-center pb-8">
-              <CardTitle className="text-2xl">Корпоративный</CardTitle>
+              <CardTitle className="text-3xl">Team</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$29</span>
                 <span className="text-muted-foreground/70 ml-1">/ месяц</span>
@@ -130,9 +210,21 @@ export function PricingSection() {
                   SLA гарантированная доступность
                 </li>
               </ul>
-              <Button className="w-full mt-6" variant="outline">
+              <Button
+                className="w-full mt-6"
+                variant="outline"
+                onClick={() => {
+                  const event = new CustomEvent('open-contact-modal')
+                  window.dispatchEvent(event)
+                }}
+              >
                 Связаться с нами
               </Button>
+              {userTarif === 'corp' && (
+                <p className="text-center text-blue-600 font-medium mt-2">
+                  Ваш текущий план
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -143,6 +235,13 @@ export function PricingSection() {
           </p>
         </div>
       </div>
+
+      <TrialSuccessModal
+        isOpen={trialModal.isOpen}
+        onClose={() => setTrialModal({ isOpen: false, plan: 'free' })}
+        plan={trialModal.plan}
+        onTarifUpdated={updateUserTarif}
+      />
     </section>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "next-view-transitions"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
@@ -17,14 +17,16 @@ import { Menu } from "lucide-react"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { ModeToggle } from "@/components/mode-toggle"
+import { ContactModal } from "@/components/ui/contact-modal"
 import { SignInModal } from "@/components/auth/signin-modal"
 import { SignUpModal } from "@/components/auth/signup-modal"
 
 export function Header() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSignIn, setShowSignIn] = useState(false)
   const [showSignUp, setShowSignUp] = useState(false)
+  const [showContact, setShowContact] = useState(false)
 
 
 
@@ -32,6 +34,30 @@ export function Header() {
     await signOut({ redirect: false })
     // Сессия обновится автоматически через SessionProvider
   }
+
+  // Handle contact modal events and session updates
+  useEffect(() => {
+    const handleOpenContact = () => {
+      if (session?.user) {
+        setShowContact(true)
+      } else {
+        setShowSignIn(true)
+      }
+    }
+
+    const handleSessionUpdate = async () => {
+      // Обновляем сессию для получения актуального тарифа
+      await update()
+    }
+
+    window.addEventListener('open-contact-modal', handleOpenContact)
+    window.addEventListener('session-update', handleSessionUpdate)
+
+    return () => {
+      window.removeEventListener('open-contact-modal', handleOpenContact)
+      window.removeEventListener('session-update', handleSessionUpdate)
+    }
+  }, [session?.user, update])
 
   const switchToSignUp = () => {
     setShowSignIn(false)
@@ -48,7 +74,7 @@ export function Header() {
       <header className="border-b bg-background backdrop-blur-sm overflow-x-hidden">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between min-w-0">
-            <Link href="/" className="text-2xl font-bold text-foreground">
+            <Link href="/" className="text-2xl font-heading text-foreground">
               Gorex
             </Link>
 
@@ -111,7 +137,7 @@ export function Header() {
                   </VisuallyHidden>
                   <div className="flex flex-col space-y-6 pt-8">
                     <div className="flex items-center justify-center mb-4">
-                      <Link href="/" className="text-2xl font-bold text-foreground" onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/" className="text-2xl font-heading text-foreground" onClick={() => setMobileMenuOpen(false)}>
                         Gorex
                       </Link>
                     </div>
@@ -179,7 +205,14 @@ export function Header() {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
-                        {session.user.name && <p className="font-medium">{session.user.name}</p>}
+                        <div className="flex items-center gap-2">
+                          {session.user.name && <p className="font-medium">{session.user.name}</p>}
+                          {session.user.tarif && (
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded font-medium">
+                              {session.user.tarif === 'prof' ? 'Pro' : session.user.tarif === 'corp' ? 'Team' : 'Free'}
+                            </span>
+                          )}
+                        </div>
                         {session.user.email && (
                           <p className="w-[200px] truncate text-sm text-muted-foreground">
                             {session.user.email}
@@ -227,6 +260,11 @@ export function Header() {
         isOpen={showSignUp}
         onClose={() => setShowSignUp(false)}
         onSwitchToSignIn={switchToSignIn}
+      />
+
+      <ContactModal
+        isOpen={showContact}
+        onClose={() => setShowContact(false)}
       />
     </>
   )

@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs"
 declare module "next-auth" {
   interface User {
     id: string
+    tarif?: string
   }
   interface Session {
     user: {
@@ -13,6 +14,7 @@ declare module "next-auth" {
       name?: string | null
       email?: string | null
       image?: string | null
+      tarif?: string
     }
   }
 }
@@ -61,13 +63,14 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          console.log("Auth successful for user:", user.email)
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          }
+              console.log("Auth successful for user:", user.email)
+              return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                image: user.image,
+                tarif: user.tarif,
+              }
         } catch (error) {
           console.error("Auth error:", error)
           console.error("Error details:", error instanceof Error ? error.message : "Unknown error")
@@ -88,6 +91,7 @@ export const authOptions: NextAuthOptions = {
       console.log("JWT callback:", { token, user })
       if (user) {
         token.id = user.id
+        token.tarif = user.tarif
       }
       return token
     },
@@ -95,6 +99,19 @@ export const authOptions: NextAuthOptions = {
       console.log("Session callback:", { session, token })
       if (token && session.user) {
         session.user.id = token.id as string
+
+        // Всегда получаем свежий тариф из базы данных
+        try {
+          const user = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { tarif: true }
+          })
+          session.user.tarif = user?.tarif || 'free'
+          console.log("Fresh tarif from DB:", session.user.tarif)
+        } catch (error) {
+          console.error("Error fetching fresh tarif:", error)
+          session.user.tarif = token.tarif as string || 'free'
+        }
       }
       return session
     }
