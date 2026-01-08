@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import { Link } from "next-view-transitions"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -12,11 +12,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Menu } from "lucide-react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { ModeToggle } from "@/components/mode-toggle"
 import { SignInModal } from "@/components/auth/signin-modal"
 import { SignUpModal } from "@/components/auth/signup-modal"
 
 export function Header() {
   const { data: session, status } = useSession()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showSignIn, setShowSignIn] = useState(false)
   const [showSignUp, setShowSignUp] = useState(false)
 
@@ -39,58 +45,132 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b bg-white/80 backdrop-blur-sm">
+      <header className="border-b bg-background backdrop-blur-sm overflow-x-hidden">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-slate-900">
+          <div className="flex items-center justify-between min-w-0">
+            <Link href="/" className="text-2xl font-bold text-foreground">
               Gorex
             </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-slate-600 hover:text-slate-900 transition-colors font-semibold"
+              className="text-muted-foreground hover:text-foreground transition-colors font-semibold"
             >
               Главная
             </Link>
             <Link
               href="/features"
-              className="text-slate-600 hover:text-slate-900 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Возможности
             </Link>
             <Link
               href="/pricing"
-              className="text-slate-600 hover:text-slate-900 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Тарифы
             </Link>
             <Link
               href="/about"
-              className="text-slate-600 hover:text-slate-900 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               О нас
             </Link>
             {session?.user && (
               <Link
                 href="/dashboard"
-                className="text-slate-600 hover:text-slate-900 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Dashboard
               </Link>
             )}
           </nav>
 
-            <div className="flex items-center space-x-4">
+              {/* Mobile Navigation */}
+            <div className="flex items-center space-x-1">
+              {/* Mobile Menu Button (Pill Nav Style) */}
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="md:hidden rounded-full px-3 py-2 bg-slate-100 hover:bg-slate-200 transition-colors"
+                  >
+                    <Menu className="h-4 w-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="top" className="w-full max-w-none border-0 bg-background/95 backdrop-blur-sm">
+                  <VisuallyHidden>
+                    <DialogTitle>Мобильное меню навигации</DialogTitle>
+                  </VisuallyHidden>
+                  <VisuallyHidden>
+                    <DialogDescription>
+                      Навигационное меню для мобильных устройств с ссылками на разделы сайта
+                    </DialogDescription>
+                  </VisuallyHidden>
+                  <div className="flex flex-col space-y-6 pt-8">
+                    <div className="flex items-center justify-center mb-4">
+                      <Link href="/" className="text-2xl font-bold text-foreground" onClick={() => setMobileMenuOpen(false)}>
+                        Gorex
+                      </Link>
+                    </div>
+                    <nav className="flex flex-col space-y-4">
+                      <Link
+                        href="/"
+                        className="text-lg font-semibold text-foreground hover:text-foreground/80 transition-colors py-3 px-4 rounded-lg hover:bg-muted"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Главная
+                      </Link>
+                      <Link
+                        href="/features"
+                        className="text-lg text-muted-foreground hover:text-foreground transition-colors py-3 px-4 rounded-lg hover:bg-muted"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Возможности
+                      </Link>
+                      <Link
+                        href="/pricing"
+                        className="text-lg text-muted-foreground hover:text-foreground transition-colors py-3 px-4 rounded-lg hover:bg-muted"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Тарифы
+                      </Link>
+                      <Link
+                        href="/about"
+                        className="text-lg text-muted-foreground hover:text-foreground transition-colors py-3 px-4 rounded-lg hover:bg-muted"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        О нас
+                      </Link>
+                      {session?.user && (
+                        <Link
+                          href="/dashboard"
+                          className="text-lg text-muted-foreground hover:text-foreground transition-colors py-3 px-4 rounded-lg hover:bg-muted"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                      )}
+                    </nav>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+
+              {/* User Avatar / Auth Buttons */}
               {status === "loading" ? (
                 <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
               ) : session?.user ? (
-                <DropdownMenu>
+                <div className="flex items-center space-x-2">
+                  <ModeToggle />
+                  <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full hover:bg-slate-100">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
-                        <AvatarFallback>
+                        <AvatarFallback className="text-xs">
                           {session.user.name?.charAt(0).toUpperCase() || session.user.email?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -120,15 +200,17 @@ export function Header() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                </div>
               ) : (
-                <>
+                <div className="hidden md:flex items-center space-x-2">
+                  <ModeToggle />
                   <Button variant="ghost" onClick={() => setShowSignIn(true)}>
                     Войти
                   </Button>
                   <Button onClick={() => setShowSignUp(true)}>
                     Регистрация
                   </Button>
-                </>
+                </div>
               )}
             </div>
           </div>

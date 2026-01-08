@@ -181,7 +181,7 @@ export function ProjectDetailsModal({
                         <p className="font-medium">
                           {member.user.name || "Без имени"}
                         </p>
-                        <p className="text-sm text-slate-600">{member.user.email}</p>
+                        <p className="text-sm text-muted-foreground">{member.user.email}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -198,7 +198,7 @@ export function ProjectDetailsModal({
                           </>
                         )}
                       </Badge>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted-foreground/70">
                         {new Date(member.joinedAt).toLocaleDateString("ru-RU")}
                       </span>
                     </div>

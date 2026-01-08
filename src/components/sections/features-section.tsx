@@ -4,13 +4,13 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-20 px-4 bg-white">
+    <section id="features" className="py-20 px-4 bg-background">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
             Возможности Gorex
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Все необходимые инструменты для эффективного управления задачами вашей команды
           </p>
         </div>
@@ -24,7 +24,7 @@ export function FeaturesSection() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Kanban-доска</h3>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Визуальное управление задачами с drag-and-drop между колонками To Do, In Progress, Done
               </p>
             </CardContent>
@@ -38,7 +38,7 @@ export function FeaturesSection() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Командная работа</h3>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Создавайте проекты и приглашайте участников по email с разными уровнями доступа
               </p>
             </CardContent>
@@ -52,7 +52,7 @@ export function FeaturesSection() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Аналитика и отчеты</h3>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Отслеживайте прогресс команды, просроченные задачи и эффективность работы
               </p>
             </CardContent>
@@ -66,7 +66,7 @@ export function FeaturesSection() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Дедлайны и приоритеты</h3>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Устанавливайте сроки выполнения и приоритеты задач для лучшего планирования
               </p>
             </CardContent>
@@ -80,7 +80,7 @@ export function FeaturesSection() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Безопасность</h3>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Защищенная аутентификация и авторизация с JWT токенами и PostgreSQL
               </p>
             </CardContent>
@@ -94,7 +94,7 @@ export function FeaturesSection() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Простота использования</h3>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Интуитивный интерфейс без лишней сложности - сосредоточьтесь на работе
               </p>
             </CardContent>

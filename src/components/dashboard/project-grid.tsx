@@ -57,12 +57,12 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
         {[...Array(3)].map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader>
-              <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-              <div className="h-3 bg-slate-200 rounded w-1/2"></div>
+              <div className="h-4 bg-muted rounded w-3/4"></div>
+              <div className="h-3 bg-muted rounded w-1/2"></div>
             </CardHeader>
             <CardContent>
-              <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
-              <div className="h-3 bg-slate-200 rounded w-2/3"></div>
+              <div className="h-3 bg-muted rounded w-full mb-2"></div>
+              <div className="h-3 bg-muted rounded w-2/3"></div>
             </CardContent>
           </Card>
         ))}
@@ -73,13 +73,13 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
   if (projects.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="mx-auto w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-          <Plus className="w-12 h-12 text-slate-400" />
+        <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
+          <Plus className="w-12 h-12 text-muted-foreground" />
         </div>
-        <h2 className="text-2xl font-semibold text-slate-900 mb-2">
+        <h2 className="text-2xl font-semibold text-foreground mb-2">
           Нет проектов
         </h2>
-        <p className="text-slate-600 mb-6">
+        <p className="text-muted-foreground mb-6">
           Создайте свой первый проект для начала работы с задачами
         </p>
         <Button onClick={() => setShowCreateModal(true)}>
@@ -110,7 +110,7 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-slate-900">Мои проекты</h2>
+        <h2 className="text-xl font-semibold text-foreground">Мои проекты</h2>
         <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Создать проект

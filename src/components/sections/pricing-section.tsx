@@ -7,13 +7,13 @@ import { Check } from "lucide-react"
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-20 px-4 bg-slate-50">
+    <section id="pricing" className="py-20 px-4 bg-background">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
             Тарифы
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Выберите подходящий тариф для вашей команды
           </p>
         </div>
@@ -24,9 +24,9 @@ export function PricingSection() {
               <CardTitle className="text-2xl">Бесплатный</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$0</span>
-                <span className="text-slate-500 ml-1">/ месяц</span>
+                <span className="text-muted-foreground/70 ml-1">/ месяц</span>
               </div>
-              <p className="text-slate-600 mt-2">Для небольших команд</p>
+              <p className="text-muted-foreground mt-2">Для небольших команд</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-3">
@@ -61,9 +61,9 @@ export function PricingSection() {
               <CardTitle className="text-2xl">Профессиональный</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$9</span>
-                <span className="text-slate-500 ml-1">/ месяц</span>
+                <span className="text-muted-foreground/70 ml-1">/ месяц</span>
               </div>
-              <p className="text-slate-600 mt-2">Для растущих команд</p>
+              <p className="text-muted-foreground mt-2">Для растущих команд</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-3">
@@ -99,9 +99,9 @@ export function PricingSection() {
               <CardTitle className="text-2xl">Корпоративный</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">$29</span>
-                <span className="text-slate-500 ml-1">/ месяц</span>
+                <span className="text-muted-foreground/70 ml-1">/ месяц</span>
               </div>
-              <p className="text-slate-600 mt-2">Для крупных компаний</p>
+              <p className="text-muted-foreground mt-2">Для крупных компаний</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-3">
@@ -138,7 +138,7 @@ export function PricingSection() {
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-slate-600">
+          <p className="text-muted-foreground">
             Все тарифы включают 14-дневный бесплатный период тестирования
           </p>
         </div>

@@ -99,7 +99,7 @@ export default function SignIn() {
             </Button>
           </form>
           <div className="mt-6 text-center">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-muted-foreground">
               Нет аккаунта?{" "}
               <Link href="/auth/signup" className="text-blue-600 hover:underline">
                 Зарегистрироваться

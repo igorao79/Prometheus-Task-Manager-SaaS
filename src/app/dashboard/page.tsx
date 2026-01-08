@@ -23,14 +23,14 @@ export default async function Dashboard() {
   console.log("Dashboard: Session found for user:", session.user.email)
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Добро пожаловать, {session.user.name}!
           </h1>
-          <p className="text-slate-600">
+          <p className="text-muted-foreground">
             Управляйте своими проектами и задачами
           </p>
         </div>

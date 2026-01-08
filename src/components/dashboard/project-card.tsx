@@ -41,7 +41,7 @@ export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
+          <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
             <div className="flex items-center">
               <Users className="w-4 h-4 mr-1" />
               {project._count.members} участников
