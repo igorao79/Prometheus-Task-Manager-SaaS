@@ -200,6 +200,12 @@ export function KanbanBoard({
     setShowCreateModal(false)
   }
 
+  const handleTaskDeleted = (taskId: string) => {
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId))
+    setShowEditModal(false)
+    setEditingTask(null)
+  }
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -276,6 +282,7 @@ export function KanbanBoard({
         task={editingTask}
         members={members}
         onTaskUpdated={handleTaskUpdated}
+        onTaskDeleted={handleTaskDeleted}
       />
     </>
   )

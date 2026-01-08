@@ -143,7 +143,7 @@ export function ProjectDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-[600px] max-h-[85vh] overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle>{project.name}</DialogTitle>
           <DialogDescription>
@@ -153,7 +153,7 @@ export function ProjectDetailsModal({
 
         <div className="space-y-6">
           {/* Project Stats */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Участники</CardTitle>
@@ -176,8 +176,8 @@ export function ProjectDetailsModal({
           {isAdmin && (
             <div>
               <h3 className="text-lg font-heading mb-4 flex items-center">
-                <Settings className="w-5 h-5 mr-2" />
-                Статус проекта
+                <Settings className="w-5 h-5 mr-2 flex-shrink-0" />
+                <span className="truncate">Статус проекта</span>
               </h3>
               <div className="space-y-2">
                 <Label htmlFor="project-status">Статус</Label>
@@ -198,8 +198,8 @@ export function ProjectDetailsModal({
           {/* Members List */}
           <div>
             <h3 className="text-lg font-heading mb-4 flex items-center">
-              <Users className="w-5 h-5 mr-2" />
-              Участники проекта
+              <Users className="w-5 h-5 mr-2 flex-shrink-0" />
+              <span className="truncate">Участники проекта</span>
             </h3>
 
             {isLoadingMembers ? (
@@ -217,7 +217,7 @@ export function ProjectDetailsModal({
             ) : (
               <div className="space-y-2">
                 {members.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <div key={member.id} className="flex flex-col gap-2 p-3 rounded-lg bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center space-x-3">
                       <Avatar className="w-8 h-8">
                         <AvatarImage src="" />
@@ -225,14 +225,14 @@ export function ProjectDetailsModal({
                           {member.user.name?.charAt(0) || member.user.email.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <p className="font-medium">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">
                           {member.user.name || "Без имени"}
                         </p>
-                        <p className="text-sm text-muted-foreground">{member.user.email}</p>
+                        <p className="text-sm text-muted-foreground truncate">{member.user.email}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-between gap-2 sm:justify-end">
                       <Badge variant={member.role === "admin" ? "default" : "secondary"}>
                         {member.role === "admin" ? (
                           <>
@@ -260,12 +260,12 @@ export function ProjectDetailsModal({
           {isAdmin && (
             <div>
               <h3 className="text-lg font-heading mb-4 flex items-center">
-                <Mail className="w-5 h-5 mr-2" />
-                Пригласить участника
+                <Mail className="w-5 h-5 mr-2 flex-shrink-0" />
+                <span className="truncate">Пригласить участника</span>
               </h3>
 
               <form onSubmit={handleInvite} className="space-y-4">
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
                   <div className="flex-1">
                     <Label htmlFor="invite-email" className="mb-2 block">Email пользователя</Label>
                     <Input
@@ -275,10 +275,11 @@ export function ProjectDetailsModal({
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
                       required
+                      className="w-full"
                     />
                   </div>
                   <div className="flex items-end">
-                    <Button type="submit" disabled={isInviting}>
+                    <Button type="submit" disabled={isInviting} className="w-full sm:w-auto">
                       {isInviting ? "Приглашение..." : "Пригласить"}
                     </Button>
                   </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +9,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { CalendarIcon, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
 import { cn } from "@/lib/utils"
@@ -56,7 +66,8 @@ interface EditTaskModalProps {
   onClose: () => void
   task: Task | null
   members: ProjectMember[]
-  onTaskUpdated: () => void
+  onTaskUpdated: (task?: Task) => void
+  onTaskDeleted: (taskId: string) => void
 }
 
 export function EditTaskModal({
@@ -64,7 +75,8 @@ export function EditTaskModal({
   onClose,
   task,
   members,
-  onTaskUpdated
+  onTaskUpdated,
+  onTaskDeleted
 }: EditTaskModalProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -73,6 +85,8 @@ export function EditTaskModal({
   const [assigneeId, setAssigneeId] = useState<string>("")
   const [deadline, setDeadline] = useState<Date>()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Заполняем форму данными задачи при открытии
   useEffect(() => {
@@ -124,14 +138,41 @@ export function EditTaskModal({
     }
   }
 
+  const handleDelete = async () => {
+    if (!task) return
+
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/tasks/${task.id}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        onTaskDeleted(task.id)
+        onClose()
+      } else {
+        console.error("Failed to delete task")
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error)
+    } finally {
+      setIsDeleting(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
   if (!task) return null
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="font-heading">Редактировать задачу</DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-[90vw] sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading">Редактировать задачу</DialogTitle>
+            <DialogDescription className="font-sans">
+              Измените параметры задачи или удалите её
+            </DialogDescription>
+          </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -156,7 +197,7 @@ export function EditTaskModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Статус</Label>
               <Select value={status} onValueChange={(value: "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE") => setStatus(value)}>
@@ -235,16 +276,51 @@ export function EditTaskModal({
             </Popover>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Отмена
+          <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              className="w-full sm:w-auto"
+              disabled={isSubmitting}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Удалить задачу
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Сохранение..." : "Сохранить"}
-            </Button>
+            <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <Button type="button" variant="outline" onClick={onClose} className="w-full sm:w-auto">
+                Отмена
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                {isSubmitting ? "Сохранение..." : "Сохранить"}
+              </Button>
+            </div>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Удалить задачу</AlertDialogTitle>
+            <AlertDialogDescription>
+              Вы уверены, что хотите удалить задачу "{title}"?
+              Это действие нельзя отменить.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Отмена</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Удаление..." : "Удалить задачу"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

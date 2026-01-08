@@ -75,7 +75,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <Badge variant="secondary" className="mb-4">
-              MVP для команды из 5 человек
+              task-manager для команд со вкусом
             </Badge>
           </motion.div>
           <motion.h1

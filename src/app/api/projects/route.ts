@@ -41,6 +41,12 @@ export async function GET() {
       },
     })
 
+    // Добавляем creatorId к каждому проекту
+    const projectsWithCreatorId = projects.map(project => ({
+      ...project,
+      creatorId: project.creatorId,
+    }))
+
     return NextResponse.json(projects)
   } catch (error) {
     console.error("Error fetching projects:", error)
