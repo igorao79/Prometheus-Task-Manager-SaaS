@@ -285,16 +285,7 @@ export function EditTaskModal({
           </div>
 
           <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => setShowDeleteDialog(true)}
-              className="w-full sm:w-auto"
-              disabled={isSubmitting}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Удалить задачу
-            </Button>
+
             <div className="flex flex-col-reverse sm:flex-row gap-3">
               <Button type="button" variant="outline" onClick={onClose} className="w-full sm:w-auto">
                 Отмена
