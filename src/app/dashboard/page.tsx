@@ -10,6 +10,7 @@ import { AnalyticsCards } from "@/components/dashboard/analytics-cards"
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const [projectsWithTasks, setProjectsWithTasks] = useState([])
+  const [projectsUpdated, setProjectsUpdated] = useState(0) // Trigger for re-fetching
 
   const fetchProjects = useCallback(async () => {
     if (!session?.user?.id) return
@@ -25,6 +26,11 @@ export default function Dashboard() {
     }
   }, [session?.user?.id])
 
+  const refreshAllData = useCallback(() => {
+    fetchProjects()
+    setProjectsUpdated(prev => prev + 1) // Trigger ProjectGrid to refresh
+  }, [fetchProjects])
+
   useEffect(() => {
     if (status === "loading") return
     if (!session?.user) {
@@ -35,6 +41,37 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProjects()
   }, [session, status, fetchProjects])
+
+  // Автоматическое обновление для приглашенных пользователей
+  useEffect(() => {
+    if (!session?.user?.id) return
+
+    const handleFocus = () => {
+      fetchProjects() // Обновляем при фокусе окна
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchProjects() // Обновляем при возвращении на вкладку
+      }
+    }
+
+    // Обновление каждые 30 секунд
+    const interval = setInterval(() => {
+      if (!document.hidden) { // Только если вкладка активна
+        fetchProjects()
+      }
+    }, 30000)
+
+    window.addEventListener('focus', handleFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearInterval(interval)
+    }
+  }, [session?.user?.id, fetchProjects])
 
   if (status === "loading") {
     return (
@@ -72,9 +109,9 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <AnalyticsCards projects={projectsWithTasks} onTasksUpdate={fetchProjects} />
+        <AnalyticsCards projects={projectsWithTasks} onTasksUpdate={refreshAllData} />
 
-        <ProjectGrid userId={session.user.id} />
+        <ProjectGrid userId={session.user.id} refreshTrigger={projectsUpdated} />
       </main>
     </div>
   )

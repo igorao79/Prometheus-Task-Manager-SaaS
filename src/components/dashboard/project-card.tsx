@@ -51,9 +51,10 @@ interface ProjectCardProps {
   project: Project
   userId: string
   onUpdate: () => void
+  onMemberCountChange?: (projectId: string, newCount: number) => void
 }
 
-export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
+export function ProjectCard({ project, userId, onUpdate, onMemberCountChange }: ProjectCardProps) {
   const [showDetails, setShowDetails] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -171,6 +172,7 @@ export function ProjectCard({ project, userId, onUpdate }: ProjectCardProps) {
         onClose={() => setShowDetails(false)}
         userId={userId}
         onUpdate={onUpdate}
+        onMemberCountChange={(newCount) => onMemberCountChange?.(project.id, newCount)}
       />
 
       <AlertDialog open={showDeleteDialog} onOpenChange={(open: boolean) => {

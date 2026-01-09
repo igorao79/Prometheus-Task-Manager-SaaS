@@ -27,11 +27,13 @@ interface Project {
 
 interface ProjectGridProps {
   userId: string
+  refreshTrigger?: number
 }
 
-export function ProjectGrid({ userId }: ProjectGridProps) {
+export function ProjectGrid({ userId, refreshTrigger }: ProjectGridProps) {
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>("ALL")
 
@@ -45,8 +47,44 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
     fetchProjects()
   }, [userId])
 
+  useEffect(() => {
+    if (refreshTrigger !== undefined && refreshTrigger > 0) {
+      fetchProjects()
+    }
+  }, [refreshTrigger])
+
+  // Автоматическое обновление для приглашенных пользователей
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchProjects() // Обновляем при фокусе окна
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchProjects() // Обновляем при возвращении на вкладку
+      }
+    }
+
+    // Обновление каждые 30 секунд
+    const interval = setInterval(() => {
+      if (!document.hidden) { // Только если вкладка активна
+        fetchProjects()
+      }
+    }, 30000)
+
+    window.addEventListener('focus', handleFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      clearInterval(interval)
+    }
+  }, [userId]) // Зависимость от userId, чтобы пересоздать эффекты при смене пользователя
+
   const fetchProjects = async () => {
     try {
+      setIsRefreshing(true)
       const response = await fetch("/api/projects")
       if (response.ok) {
         const projectsData = await response.json()
@@ -57,7 +95,18 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
       console.error("Error fetching projects:", error)
     } finally {
       setIsLoading(false)
+      setIsRefreshing(false)
     }
+  }
+
+  const handleMemberCountChange = (projectId: string, newCount: number) => {
+    setProjects(prevProjects =>
+      prevProjects.map(project =>
+        project.id === projectId
+          ? { ...project, _count: { ...project._count, members: newCount } }
+          : project
+      )
+    )
   }
 
   if (isLoading) {
@@ -135,6 +184,12 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
                 <SelectItem value="ARCHIVED">Архивированные</SelectItem>
               </SelectContent>
             </Select>
+            {isRefreshing && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <div className="w-3 h-3 border border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin"></div>
+                Обновление...
+              </div>
+            )}
           </div>
         </div>
         <Button onClick={() => setShowCreateModal(true)} className="w-full sm:w-auto">
@@ -150,6 +205,7 @@ export function ProjectGrid({ userId }: ProjectGridProps) {
             project={project}
             userId={userId}
             onUpdate={fetchProjects}
+            onMemberCountChange={handleMemberCountChange}
           />
         ))}
       </div>

@@ -44,6 +44,7 @@ interface ProjectDetailsModalProps {
   onClose: () => void
   userId: string
   onUpdate: () => void
+  onMemberCountChange?: (newCount: number) => void
 }
 
 export function ProjectDetailsModal({
@@ -51,7 +52,8 @@ export function ProjectDetailsModal({
   isOpen,
   onClose,
   userId,
-  onUpdate
+  onUpdate,
+  onMemberCountChange
 }: ProjectDetailsModalProps) {
   const [members, setMembers] = useState<ProjectMember[]>([])
   const [projectStatus, setProjectStatus] = useState(project.status)
@@ -104,11 +106,12 @@ export function ProjectDetailsModal({
         setMembers(prev => [...prev, newMember])
         setInviteEmail("")
         onUpdate() // Refresh projects list
+        onMemberCountChange?.(members.length + 1) // Update member count immediately
       } else {
         const error = await response.json()
         setInviteError(error.error || "Ошибка при приглашении")
       }
-    } catch (error) {
+    } catch {
       setInviteError("Произошла ошибка при приглашении")
     } finally {
       setIsInviting(false)
@@ -144,7 +147,7 @@ export function ProjectDetailsModal({
       if (response.ok) {
         // Обновляем список участников
         await fetchMembers()
-      } else {
+        onMemberCountChange?.(members.length - 1) // Update member count immediately
       }
     } catch (error) {
       console.error("Error updating project status:", error)
