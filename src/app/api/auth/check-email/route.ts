@@ -12,6 +12,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Проверяем формат email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json(
+        { error: "Неверный формат email" },
+        { status: 400 }
+      )
+    }
+
     // Проверяем, существует ли пользователь с таким email
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },

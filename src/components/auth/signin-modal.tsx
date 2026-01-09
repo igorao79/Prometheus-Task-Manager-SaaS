@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import {
   Dialog,
   DialogContent,
@@ -24,11 +25,74 @@ export function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignInModalPr
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [emailMessage, setEmailMessage] = useState("")
+  const [emailMessageType, setEmailMessageType] = useState<"error" | "">("")
+  const emailTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Очищаем состояния при закрытии модального окна
+  useEffect(() => {
+    if (!isOpen) {
+      if (emailTimeoutRef.current) {
+        clearTimeout(emailTimeoutRef.current)
+        emailTimeoutRef.current = null
+      }
+      // Сбрасываем состояния
+      setError("")
+      setEmailMessage("")
+      setEmailMessageType("")
+    }
+  }, [isOpen])
+
+  // Валидация формата email
+  const validateEmailFormat = (emailValue: string) => {
+    if (!emailValue.trim()) {
+      setEmailMessage("")
+      setEmailMessageType("")
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(emailValue.trim())) {
+      setEmailMessage("Неверный формат email")
+      setEmailMessageType("error")
+    } else {
+      setEmailMessage("")
+      setEmailMessageType("")
+    }
+  }
+
+  const handleEmailChange = (newEmail: string) => {
+    setEmail(newEmail)
+    setError("")
+
+    // Очищаем предыдущий таймаут
+    if (emailTimeoutRef.current) {
+      clearTimeout(emailTimeoutRef.current)
+    }
+
+    // Устанавливаем новую задержку 1.5 секунды
+    emailTimeoutRef.current = setTimeout(() => {
+      if (newEmail.trim()) {
+        validateEmailFormat(newEmail)
+      } else {
+        setEmailMessage("")
+        setEmailMessageType("")
+      }
+    }, 1500)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
+
+    // Проверяем формат email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      setError("Введите корректный email")
+      setIsLoading(false)
+      return
+    }
 
     try {
       const result = await signIn("credentials", {
@@ -62,9 +126,9 @@ export function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignInModalPr
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
+            <p className="text-sm text-red-600">
+              ✗ {error}
+            </p>
           )}
 
           <div className="space-y-2">
@@ -73,17 +137,24 @@ export function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignInModalPr
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => handleEmailChange(e.target.value)}
               required
               className="w-full"
             />
+            {emailMessage && emailMessageType && (
+              <p className={`text-sm ${
+                emailMessageType === "error" ? "text-red-600" : "text-muted-foreground"
+              }`}>
+                {emailMessageType === "error" && "✗ "}
+                {emailMessage}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="password">Пароль</Label>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

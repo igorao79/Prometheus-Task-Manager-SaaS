@@ -46,22 +46,31 @@ export default function Dashboard() {
   useEffect(() => {
     if (!session?.user?.id) return
 
+    let focusTimeout: NodeJS.Timeout
+    let visibilityTimeout: NodeJS.Timeout
+
     const handleFocus = () => {
-      fetchProjects() // Обновляем при фокусе окна
+      clearTimeout(focusTimeout)
+      focusTimeout = setTimeout(() => {
+        fetchProjects() // Обновляем при фокусе окна с задержкой
+      }, 1000)
     }
 
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        fetchProjects() // Обновляем при возвращении на вкладку
+        clearTimeout(visibilityTimeout)
+        visibilityTimeout = setTimeout(() => {
+          fetchProjects() // Обновляем при возвращении на вкладку с задержкой
+        }, 1000)
       }
     }
 
-    // Обновление каждые 30 секунд
+    // Обновление каждые 5 минут
     const interval = setInterval(() => {
       if (!document.hidden) { // Только если вкладка активна
         fetchProjects()
       }
-    }, 30000)
+    }, 300000)
 
     window.addEventListener('focus', handleFocus)
     document.addEventListener('visibilitychange', handleVisibilityChange)
@@ -70,6 +79,8 @@ export default function Dashboard() {
       window.removeEventListener('focus', handleFocus)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       clearInterval(interval)
+      clearTimeout(focusTimeout)
+      clearTimeout(visibilityTimeout)
     }
   }, [session?.user?.id, fetchProjects])
 

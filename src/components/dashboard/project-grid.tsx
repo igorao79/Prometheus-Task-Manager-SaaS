@@ -55,22 +55,31 @@ export function ProjectGrid({ userId, refreshTrigger }: ProjectGridProps) {
 
   // Автоматическое обновление для приглашенных пользователей
   useEffect(() => {
+    let focusTimeout: NodeJS.Timeout
+    let visibilityTimeout: NodeJS.Timeout
+
     const handleFocus = () => {
-      fetchProjects() // Обновляем при фокусе окна
+      clearTimeout(focusTimeout)
+      focusTimeout = setTimeout(() => {
+        fetchProjects() // Обновляем при фокусе окна с задержкой
+      }, 1000)
     }
 
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        fetchProjects() // Обновляем при возвращении на вкладку
+        clearTimeout(visibilityTimeout)
+        visibilityTimeout = setTimeout(() => {
+          fetchProjects() // Обновляем при возвращении на вкладку с задержкой
+        }, 1000)
       }
     }
 
-    // Обновление каждые 30 секунд
+    // Обновление каждые 5 минут
     const interval = setInterval(() => {
       if (!document.hidden) { // Только если вкладка активна
         fetchProjects()
       }
-    }, 30000)
+    }, 300000)
 
     window.addEventListener('focus', handleFocus)
     document.addEventListener('visibilitychange', handleVisibilityChange)
@@ -79,6 +88,8 @@ export function ProjectGrid({ userId, refreshTrigger }: ProjectGridProps) {
       window.removeEventListener('focus', handleFocus)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       clearInterval(interval)
+      clearTimeout(focusTimeout)
+      clearTimeout(visibilityTimeout)
     }
   }, [userId]) // Зависимость от userId, чтобы пересоздать эффекты при смене пользователя
 

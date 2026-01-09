@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera, Save, User } from "lucide-react"
 import { NotificationModal } from "@/components/ui/notification-modal"
@@ -27,6 +28,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     currentPassword: "",
@@ -56,6 +58,18 @@ export default function ProfilePage() {
     fetchProfile()
   }, [session, status])
 
+  // Отслеживание изменений в форме
+  useEffect(() => {
+    if (!profile) return
+
+    const nameChanged = formData.name.trim() !== (profile.name || "")
+    // Считаем что пользователь хочет менять пароль только если заполнено новое поле пароля
+    // (текущий пароль может быть случайно заполнен, но это не значит что пользователь хочет менять пароль)
+    const passwordChangingAttempt = formData.newPassword.trim().length > 0
+
+    setHasChanges(nameChanged || passwordChangingAttempt)
+  }, [formData, profile])
+
   const fetchProfile = async () => {
     try {
       const response = await fetch("/api/profile")
@@ -63,6 +77,7 @@ export default function ProfilePage() {
         const data = await response.json()
         setProfile(data)
         setFormData(prev => ({ ...prev, name: data.name || "" }))
+        setHasChanges(false) // Сбросить состояние изменений при загрузке
       } else {
         setNotification({
           isOpen: true,
@@ -93,6 +108,10 @@ export default function ProfilePage() {
 
     if (!formData.name.trim()) {
       newErrors.name = "Имя обязательно"
+    }
+    // Проверяем отличие имени только если пользователь пытается его изменить
+    else if (formData.name.trim() !== (profile?.name || "")) {
+      newErrors.name = "Новое имя должно отличаться от текущего"
     }
 
     if (formData.newPassword) {
@@ -136,6 +155,7 @@ export default function ProfilePage() {
           newPassword: "",
           confirmPassword: "",
         }))
+        setHasChanges(false) // Сбросить состояние изменений после успешного сохранения
 
         // Update local profile state
         setProfile(prev => prev ? { ...prev, name: formData.name.trim() } : null)
@@ -297,9 +317,8 @@ export default function ProfilePage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="currentPassword">Текущий пароль</Label>
-                  <Input
+                  <PasswordInput
                     id="currentPassword"
-                    type="password"
                     value={formData.currentPassword}
                     onChange={(e) => setFormData(prev => ({ ...prev, currentPassword: e.target.value }))}
                     placeholder="Введите текущий пароль"
@@ -309,9 +328,8 @@ export default function ProfilePage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="newPassword">Новый пароль</Label>
-                  <Input
+                  <PasswordInput
                     id="newPassword"
-                    type="password"
                     value={formData.newPassword}
                     onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
                     placeholder="Введите новый пароль"
@@ -321,9 +339,8 @@ export default function ProfilePage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Подтверждение пароля</Label>
-                  <Input
+                  <PasswordInput
                     id="confirmPassword"
-                    type="password"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     placeholder="Повторите новый пароль"
@@ -333,7 +350,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button onClick={handleSaveProfile} disabled={isSaving}>
+                <Button onClick={handleSaveProfile} disabled={isSaving || !hasChanges}>
                   <Save className="w-4 h-4 mr-2" />
                   {isSaving ? "Сохранение..." : "Сохранить изменения"}
                 </Button>

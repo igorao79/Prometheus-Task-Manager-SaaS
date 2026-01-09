@@ -189,9 +189,21 @@ export function KanbanBoard({
     }
   }
 
-  const handleTaskUpdated = () => {
-    // В будущем здесь можно добавить логику для обновления данных без перезагрузки
-    window.location.reload()
+  const handleTaskUpdated = async () => {
+    // Мягкое обновление данных без перезагрузки страницы
+    try {
+      const response = await fetch(`/api/projects/${projectId}/tasks`)
+      if (response.ok) {
+        const updatedTasks = await response.json()
+        setTasks(updatedTasks)
+        setShowEditModal(false)
+        setEditingTask(null)
+      }
+    } catch (error) {
+      console.error("Error refreshing tasks:", error)
+      // Fallback - перезагрузка страницы при ошибке
+      window.location.reload()
+    }
   }
 
   const handleTaskCreated = (newTask: Task) => {

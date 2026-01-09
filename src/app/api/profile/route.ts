@@ -94,6 +94,15 @@ export async function PUT(request: NextRequest) {
         )
       }
 
+      // Проверяем что новый пароль отличается от текущего
+      const isSamePassword = await bcrypt.compare(newPassword, user.password || "")
+      if (isSamePassword) {
+        return NextResponse.json(
+          { error: "Новый пароль должен отличаться от текущего" },
+          { status: 400 }
+        )
+      }
+
       if (newPassword.length < 6) {
         return NextResponse.json(
           { error: "Новый пароль должен содержать минимум 6 символов" },

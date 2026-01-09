@@ -1,6 +1,6 @@
 "use client"
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, XCircle, AlertCircle, Info } from "lucide-react"
 
@@ -32,6 +32,9 @@ export function NotificationModal({ isOpen, onClose, type, title, message }: Not
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] text-center">
         <DialogTitle className="sr-only">{title}</DialogTitle>
+        <DialogDescription className="sr-only">
+          {message}
+        </DialogDescription>
         <div className="flex flex-col items-center space-y-4 py-6">
           <div className="flex justify-center">
             {getIcon()}

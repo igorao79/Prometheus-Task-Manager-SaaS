@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import {
   Dialog,
   DialogContent,
@@ -25,7 +26,8 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
-  const [emailExists, setEmailExists] = useState<boolean | null>(null)
+  const [emailMessage, setEmailMessage] = useState("")
+  const [emailMessageType, setEmailMessageType] = useState<"error" | "success" | "checking" | "">("")
   const [checkingEmail, setCheckingEmail] = useState(false)
   const emailTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -37,9 +39,10 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
         emailTimeoutRef.current = null
       }
       // Сбрасываем состояния
-      setEmailExists(null)
       setCheckingEmail(false)
       setError("")
+      setEmailMessage("")
+      setEmailMessageType("")
       setSuccess("")
     }
   }, [isOpen])
@@ -48,6 +51,8 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
     if (!emailToCheck.trim()) return
 
     setCheckingEmail(true)
+    setEmailMessage("")
+    setEmailMessageType("")
     try {
       const response = await fetch("/api/auth/check-email", {
         method: "POST",
@@ -60,18 +65,28 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
       const data = await response.json()
 
       if (response.ok) {
-        setEmailExists(data.exists)
         if (data.exists) {
-          setError("Этот email уже зарегистрирован")
+          setEmailMessage("Email уже зарегистрирован")
+          setEmailMessageType("error")
         } else {
-          setError("")
+          setEmailMessage("Email доступен")
+          setEmailMessageType("success")
         }
+        setError("") // Очищаем общую ошибку
       } else {
-        setError(data.error || "Ошибка проверки email")
+        // Ошибки валидации email показываем под полем email
+        if (data.error === "Неверный формат email" || data.error === "Email уже зарегистрирован") {
+          setEmailMessage(data.error)
+          setEmailMessageType("error")
+        } else {
+          // Другие ошибки (сети, сервера) показываем в общем поле
+          setError(data.error || "Ошибка проверки email")
+        }
       }
     } catch (error) {
       console.error("Error checking email:", error)
-      setError("Ошибка проверки email")
+      setEmailMessage("Ошибка проверки email")
+      setEmailMessageType("error")
     } finally {
       setCheckingEmail(false)
     }
@@ -79,8 +94,9 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
 
   const handleEmailChange = (newEmail: string) => {
     setEmail(newEmail)
-    setEmailExists(null)
     setError("")
+    setEmailMessage("")
+    setEmailMessageType("")
 
     // Проверяем email с небольшой задержкой
     if (emailTimeoutRef.current) {
@@ -91,7 +107,7 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
       if (newEmail.trim()) {
         checkEmailExists(newEmail)
       }
-    }, 500)
+    }, 1500)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,16 +116,23 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
     setError("")
     setSuccess("")
 
-    // Проверяем, что email не существует
-    if (emailExists === true) {
-      setError("Этот email уже зарегистрирован")
+    // Проверяем валидность email
+    if (emailMessageType === "error") {
+      setError(emailMessage)
       setIsLoading(false)
       return
     }
 
-    if (emailExists === null && email.trim()) {
+    if (emailMessageType === "" && email.trim() && !checkingEmail) {
       // Если проверка еще не завершена, подождем
       setError("Проверка email...")
+      setIsLoading(false)
+      return
+    }
+
+    if (emailMessageType !== "success" && email.trim()) {
+      // Email должен быть проверен и доступен
+      setError("Пожалуйста, введите корректный email")
       setIsLoading(false)
       return
     }
@@ -131,8 +154,9 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
         setName("")
         setEmail("")
         setPassword("")
-        setEmailExists(null)
         setCheckingEmail(false)
+        setEmailMessage("")
+        setEmailMessageType("")
         onClose()
         onSwitchToSignIn()
       } else {
@@ -194,19 +218,23 @@ export function SignUpModal({ isOpen, onClose, onSwitchToSignIn }: SignUpModalPr
             {checkingEmail && (
               <p className="text-sm text-muted-foreground">Проверка email...</p>
             )}
-            {emailExists === false && email.trim() && (
-              <p className="text-sm text-green-600">✓ Email доступен</p>
-            )}
-            {emailExists === true && (
-              <p className="text-sm text-red-600">✗ Email уже зарегистрирован</p>
+            {emailMessage && emailMessageType && !checkingEmail && (
+              <p className={`text-sm ${
+                emailMessageType === "error" ? "text-red-600" :
+                emailMessageType === "success" ? "text-green-600" :
+                "text-muted-foreground"
+              }`}>
+                {emailMessageType === "error" && "✗ "}
+                {emailMessageType === "success" && "✓ "}
+                {emailMessage}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="password">Пароль</Label>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

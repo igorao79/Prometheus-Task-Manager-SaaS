@@ -164,7 +164,7 @@ export function EditTaskModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-[90vw] sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-lg max-h-[80vh] overflow-y-auto overflow-x-hidden">
           <DialogHeader>
             <DialogTitle className="font-heading">Редактировать задачу</DialogTitle>
             <DialogDescription className="font-sans">
@@ -181,6 +181,7 @@ export function EditTaskModal({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Введите название задачи"
               required
+              className="w-full"
             />
           </div>
 
@@ -192,6 +193,7 @@ export function EditTaskModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Описание задачи"
               rows={3}
+              className="w-full"
             />
           </div>
 
@@ -199,7 +201,7 @@ export function EditTaskModal({
             <div className="space-y-2">
               <Label>Статус</Label>
               <Select value={status} onValueChange={(value: "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE") => setStatus(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -214,7 +216,7 @@ export function EditTaskModal({
             <div className="space-y-2">
               <Label>Приоритет</Label>
               <Select value={priority} onValueChange={(value: "LOW" | "MEDIUM" | "HIGH" | "URGENT") => setPriority(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -230,7 +232,7 @@ export function EditTaskModal({
           <div className="space-y-2">
             <Label>Исполнитель</Label>
             <Select value={assigneeId || "none"} onValueChange={(value) => setAssigneeId(value === "none" ? "" : value)}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Не назначен" />
               </SelectTrigger>
               <SelectContent>
@@ -254,6 +256,7 @@ export function EditTaskModal({
                     "w-full justify-start text-left font-normal",
                     !deadline && "text-muted-foreground"
                   )}
+                  type="button"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {deadline ? (
